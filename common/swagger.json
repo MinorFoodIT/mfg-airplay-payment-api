@@ -1,0 +1,1273 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Burker King @Thailand Delivery Platform.",
+    "version": "1.0.1",
+    "title": "Burker King @Thailand Delivery APIs Platform",
+    "termsOfService": "",
+    "contact": {
+      "email": "akarat_su@minor.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "n.api-uat.com",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Client registration and login to get access token"
+    },
+    {
+      "name": "Store information",
+      "description": " "
+    },
+    {
+      "name": "Customer management",
+      "description": "Customer and addresses registration"
+    },
+    {
+      "name": "Order management",
+      "description": " "
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Create a new client application",
+        "description": "Register new client with name ,email and password",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "description": "Client name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "description": "Email Identification",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "expires_in": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get access token",
+        "description": "Get access token",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "body",
+            "description": "Email Identification",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "expires_in": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "500,401,404": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/customer": {
+      "get": {
+        "tags": [
+          "Customer management"
+        ],
+        "summary": "Get customer registered",
+        "description": "Get customer registered",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Customer ID",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "register_id": {
+                  "type": "string"
+                },
+                "customer_id": {
+                  "type": "string"
+                },
+                "create_date": {
+                  "type": "string"
+                },
+                "cust_token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/registercustomer": {
+      "post": {
+        "tags": [
+          "Customer management"
+        ],
+        "summary": "Add new customer (obsoleted end year)",
+        "description": "Create a new customer then return cust token and IDs",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Client access token from authentication",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-phatform",
+            "in": "header",
+            "description": "Delivery platform",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-channel",
+            "in": "header",
+            "description": "Client channel",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-language",
+            "in": "header",
+            "description": "Prefered language",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "first_name",
+            "in": "body",
+            "description": "First name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "last_name",
+            "in": "body",
+            "description": "Last name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "description": "Customer email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Customer password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "phone_number",
+            "in": "body",
+            "description": "Customer phone number",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "facebook_uid",
+            "in": "body",
+            "description": "Facebook account UID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "offer",
+            "in": "body",
+            "description": "Offer conditional",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "name": "gender",
+            "in": "body",
+            "description": "male or female",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "number"
+                },
+                "register_id": {
+                  "type": "number"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/registercustomer": {
+      "post": {
+        "tags": [
+          "Customer management"
+        ],
+        "summary": "Add new customer (upgrade version)",
+        "description": "Create a new customer then return cust token and IDs",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Client access token from authentication",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-phatform",
+            "in": "header",
+            "description": "Delivery platform",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-channel",
+            "in": "header",
+            "description": "Client channel",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-language",
+            "in": "header",
+            "description": "Prefered language",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "first_name",
+            "in": "body",
+            "description": "First name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "last_name",
+            "in": "body",
+            "description": "Last name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "description": "Customer email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Customer password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "phone_number",
+            "in": "body",
+            "description": "Customer phone number",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "facebook_uid",
+            "in": "body",
+            "description": "Facebook account UID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "offer",
+            "in": "body",
+            "description": "Offer conditional",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "name": "gender",
+            "in": "body",
+            "description": "male or female",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "number"
+                },
+                "register_id": {
+                  "type": "number"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/store": {
+      "get": {
+        "tags": [
+          "Store information"
+        ],
+        "summary": "Get store info by ID",
+        "description": "Get store",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Store ID",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "store_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/store_assign/geocode": {
+      "get": {
+        "tags": [
+          "Store information"
+        ],
+        "summary": "Finding BK store with latitude and longtitude",
+        "description": "Finding store",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "lat",
+            "in": "path",
+            "description": "Latitude",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "lng",
+            "in": "path",
+            "description": "Longtitude",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "store_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/neworder": {
+      "post": {
+        "tags": [
+          "Order management"
+        ],
+        "summary": "Add new order to store (obsolete end year)",
+        "description": "Create a new order then return back orderID",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Client access token from authentication",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-phatform",
+            "in": "header",
+            "description": "Delivery platform",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-channel",
+            "in": "header",
+            "description": "Client channel",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-language",
+            "in": "header",
+            "description": "Prefered language",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "requestBody",
+            "in": "body",
+            "description": "Request payload",
+            "required": true,
+            "type": "object",
+            "example": {
+              "fulfillment": {
+                "address": {
+                  "line1": "44 เมืองทอง",
+                  "line2": "บางแค",
+                  "city": "ปทุมธาณี",
+                  "country": "ไทย",
+                  "postalCode": "10330",
+                  "coordinates": {
+                    "latitude": 13.705576,
+                    "longitude": 100.491491
+                  },
+                  "notes": "เดินทางข้ามสะพานกรุงเทพ แล้วเลี้ยวขวา"
+                },
+                "fulfillmentTime": "2018-01-31 12:34:56",
+                "type": "Delivery",
+                "brand": "BK",
+                "store_id": 1991,
+                "order_method": "now"
+              },
+              "fees": [
+                {
+                  "type": "ServiceCharge",
+                  "amount": 50
+                }
+              ],
+              "orderLines": [
+                {
+                  "comments": "Whopper",
+                  "description": "Whopper",
+                  "extendedAmount": 0,
+                  "itemType": "item",
+                  "notes": [
+                    {
+                      "type": "Substitutions",
+                      "value": "note1"
+                    }
+                  ],
+                  "childLine": [],
+                  "productId": {
+                    "type": "item",
+                    "value": "1501"
+                  },
+                  "quantity": {
+                    "value": 1
+                  },
+                  "unitPrice": 155,
+                  "overridePrice": true
+                },
+                {
+                  "comments": "WhopJR PorkVM16",
+                  "description": "WhopJR PorkVM16",
+                  "extendedAmount": 0,
+                  "itemType": "item",
+                  "notes": [
+                    {
+                      "type": "Substitutions",
+                      "value": "note2"
+                    }
+                  ],
+                  "childLine": [
+                    {
+                      "comments": "Chg Joe>Coke16",
+                      "description": "Chg Joe>Coke16",
+                      "extendedAmount": 0,
+                      "itemType": "mod",
+                      "notes": [],
+                      "productId": {
+                        "type": "mod",
+                        "value": "7074"
+                      },
+                      "quantity": {
+                        "value": 1
+                      }
+                    },
+                    {
+                      "comments": "ChgFri>O/Rin(R)",
+                      "description": "ChgFri>O/Rin(R)",
+                      "extendedAmount": 0,
+                      "itemType": "mod",
+                      "notes": [],
+                      "productId": {
+                        "type": "mod",
+                        "value": "2580"
+                      },
+                      "quantity": {
+                        "value": 1
+                      }
+                    }
+                  ],
+                  "productId": {
+                    "type": "item",
+                    "value": "7076"
+                  },
+                  "quantity": {
+                    "value": 1
+                  },
+                  "unitPrice": 169,
+                  "overridePrice": true
+                }
+              ],
+              "payments": [
+                {
+                  "amount": 695,
+                  "description": "web payment",
+                  "referenceId": "refpay11001",
+                  "status": "Paid",
+                  "type": "Online"
+                }
+              ],
+              "promotions": [],
+              "additionalReferenceIds": {
+                "additionalProp1": "",
+                "additionalProp2": "",
+                "additionalProp3": ""
+              },
+              "taxExempt": true,
+              "totalModifiers": [],
+              "comments": "Comment ref1",
+              "channel": "Web",
+              "currency": "THB",
+              "customer": {
+                "cust_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJDVVNUX0lEIjoiNDAwMDAwNTAxMzkxOTMyOCIsIkNVU1RfRU1BSSI6IjZjYzZiZDBkLWI2MTAtNGY0My04MmM5LTJkMWMxZjRhN2Y1YkBidXJnZXJraW5nLmNvLnRoIiwiVVNFUk5BTUUiOiI2Y2M2YmQwZC1iNjEwLTRmNDMtODJjOS0yZDFjMWY0YTdmNWJAYnVyZ2Vya2luZy5jby50aCIsIlBBU1NXT1JEIjoibWlub3Jmb29kIiwiQ1VTVF9DT1JQSUQiOiI1MTM5MTkzMjgiLCJpYXQiOjE1NzE5OTk0MjZ9.LnGZ8UjZHTHWJPy6qnAVbYZRHwlY_aeeDpJXhPFedu0"
+              },
+              "referenceId": "ref12345",
+              "totals": [
+                {
+                  "type": "Gross",
+                  "value": 645
+                },
+                {
+                  "type": "Discount",
+                  "value": 0
+                },
+                {
+                  "type": "Net",
+                  "value": 695
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "number"
+                },
+                "register_id": {
+                  "type": "number"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid data or internal server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orderdetails": {
+      "get": {
+        "tags": [
+          "Order management"
+        ],
+        "summary": "Get order details",
+        "description": "Get order details",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Order ID",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "order_status": {
+                  "type": "string"
+                },
+                "order_status_datetime": {
+                  "type": "string"
+                },
+                "order_transaction_date": {
+                  "type": "string"
+                },
+                "order_delivering_duetime": {
+                  "type": "string"
+                },
+                "order_store_id": {
+                  "type": "string"
+                },
+                "order_store_name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/validateorder": {
+      "post": {
+        "tags": [
+          "Order management"
+        ],
+        "summary": "Validate order before create",
+        "description": "Validate order before create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Order ID",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "order_status": {
+                  "type": "string"
+                },
+                "order_status_datetime": {
+                  "type": "string"
+                },
+                "order_transaction_date": {
+                  "type": "string"
+                },
+                "order_delivering_duetime": {
+                  "type": "string"
+                },
+                "order_store_id": {
+                  "type": "string"
+                },
+                "order_store_name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/neworder": {
+      "post": {
+        "tags": [
+          "Order management"
+        ],
+        "summary": "Add new order to store (upgrade version)",
+        "description": "Create a new order then return back orderID",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Client access token from authentication",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-phatform",
+            "in": "header",
+            "description": "Delivery platform",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-channel",
+            "in": "header",
+            "description": "Client channel",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-language",
+            "in": "header",
+            "description": "Prefered language",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "requestBody",
+            "in": "body",
+            "description": "Request payload",
+            "required": true,
+            "type": "object",
+            "example": {
+              "fulfillment": {
+                "address": {
+                  "line1": "44 เมืองทอง",
+                  "line2": "บางแค",
+                  "city": "ปทุมธาณี",
+                  "country": "ไทย",
+                  "postalCode": "10330",
+                  "coordinates": {
+                    "latitude": 13.705576,
+                    "longitude": 100.491491
+                  },
+                  "notes": "เดินทางข้ามสะพานกรุงเทพ แล้วเลี้ยวขวา"
+                },
+                "fulfillmentTime": "2018-01-31 12:34:56",
+                "type": "Delivery",
+                "brand": "BK",
+                "store_id": 1991,
+                "order_method": "now"
+              },
+              "fees": [
+                {
+                  "type": "ServiceCharge",
+                  "amount": 50
+                }
+              ],
+              "orderLines": [
+                {
+                  "comments": "Whopper",
+                  "description": "Whopper",
+                  "extendedAmount": 0,
+                  "itemType": "item",
+                  "notes": [
+                    {
+                      "type": "Substitutions",
+                      "value": "note1"
+                    }
+                  ],
+                  "childLine": [],
+                  "productId": {
+                    "type": "item",
+                    "value": "1501"
+                  },
+                  "quantity": {
+                    "value": 1
+                  },
+                  "unitPrice": 155,
+                  "overridePrice": true
+                },
+                {
+                  "comments": "WhopJR PorkVM16",
+                  "description": "WhopJR PorkVM16",
+                  "extendedAmount": 0,
+                  "itemType": "item",
+                  "notes": [
+                    {
+                      "type": "Substitutions",
+                      "value": "note2"
+                    }
+                  ],
+                  "childLine": [
+                    {
+                      "comments": "Chg Joe>Coke16",
+                      "description": "Chg Joe>Coke16",
+                      "extendedAmount": 0,
+                      "itemType": "mod",
+                      "notes": [],
+                      "productId": {
+                        "type": "mod",
+                        "value": "7074"
+                      },
+                      "quantity": {
+                        "value": 1
+                      }
+                    },
+                    {
+                      "comments": "ChgFri>O/Rin(R)",
+                      "description": "ChgFri>O/Rin(R)",
+                      "extendedAmount": 0,
+                      "itemType": "mod",
+                      "notes": [],
+                      "productId": {
+                        "type": "mod",
+                        "value": "2580"
+                      },
+                      "quantity": {
+                        "value": 1
+                      }
+                    }
+                  ],
+                  "productId": {
+                    "type": "item",
+                    "value": "7076"
+                  },
+                  "quantity": {
+                    "value": 1
+                  },
+                  "unitPrice": 169,
+                  "overridePrice": true
+                }
+              ],
+              "payments": [
+                {
+                  "amount": 695,
+                  "description": "web payment",
+                  "referenceId": "refpay11001",
+                  "status": "Paid",
+                  "type": "Online"
+                }
+              ],
+              "promotions": [],
+              "additionalReferenceIds": {
+                "additionalProp1": "",
+                "additionalProp2": "",
+                "additionalProp3": ""
+              },
+              "taxExempt": true,
+              "totalModifiers": [],
+              "comments": "Comment ref1",
+              "channel": "Web",
+              "currency": "THB",
+              "customer": {
+                "cust_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJDVVNUX0lEIjoiNDAwMDAwNTAxMzkxOTMyOCIsIkNVU1RfRU1BSSI6IjZjYzZiZDBkLWI2MTAtNGY0My04MmM5LTJkMWMxZjRhN2Y1YkBidXJnZXJraW5nLmNvLnRoIiwiVVNFUk5BTUUiOiI2Y2M2YmQwZC1iNjEwLTRmNDMtODJjOS0yZDFjMWY0YTdmNWJAYnVyZ2Vya2luZy5jby50aCIsIlBBU1NXT1JEIjoibWlub3Jmb29kIiwiQ1VTVF9DT1JQSUQiOiI1MTM5MTkzMjgiLCJpYXQiOjE1NzE5OTk0MjZ9.LnGZ8UjZHTHWJPy6qnAVbYZRHwlY_aeeDpJXhPFedu0"
+              },
+              "referenceId": "ref12345",
+              "totals": [
+                {
+                  "type": "Gross",
+                  "value": 645
+                },
+                {
+                  "type": "Discount",
+                  "value": 0
+                },
+                {
+                  "type": "Net",
+                  "value": 695
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful creation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "number"
+                },
+                "register_id": {
+                  "type": "number"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid data or internal server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "orderline": {
+      "type": "object",
+      "properties": {
+        "comments": {"type":"string"},
+        "description": {"type":"string"},
+        "extendedAmount": {"type":"number"},
+        "itemType": {"type":"string"},
+        "notes": [
+          {
+            "type": {"type":"string"},
+            "value": {"type":"string"}
+          }
+        ],
+        "childLine": [
+          {
+            "comments": {"type":"string"},
+            "description": {"type":"string"},
+            "extendedAmount": {"type":"number"},
+            "itemType": {"type":"string"},
+            "notes": [],
+            "productId": {
+              "type": {"type":"string"},
+              "value": {"type":"number"}
+            },
+            "quantity": {
+              "value": {"type":"integer"}
+            }
+          }
+        ],
+        "productId": {
+          "type": {"type":"string"},
+          "value": {"type":"number"}
+        },
+        "quantity": {
+          "value": {"type":"integer"}
+        },
+        "unitPrice": {"type":"number"},
+        "overridePrice": "boolean"
+      }
+    }
+  }
+}

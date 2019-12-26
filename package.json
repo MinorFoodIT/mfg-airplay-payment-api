@@ -1,0 +1,51 @@
+{
+  "name": "mfg-airpay-payment-api",
+  "version": "1.0.0",
+  "description": "Minor aloha payment via AirPay Mercant Barcode API",
+  "main": "./bin/server.js",
+  "engines": {
+    "node": ">=10.x"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 TZ=Asia/Bangkok nodemon ./bin/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 TZ=Asia/Bangkok node ./bin/server.js"
+  },
+  "author": "Akarat Suvitayasiri",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.1.0",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-http-context": "^1.2.3",
+    "express-validation": "^1.0.3",
+    "express-winston": "^4.0.1",
+    "fast-xml-parser": "^3.15.1",
+    "he": "^1.2.0",
+    "helmet": "^3.21.2",
+    "http-status": "^1.4.2",
+    "joi": "^14.3.1",
+    "method-override": "^3.0.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
+    "morgan": "^1.9.1",
+    "node-cache": "^5.1.0",
+    "pg": "^7.15.1",
+    "ramda": "^0.26.1",
+    "request": "^2.88.0",
+    "soap": "^0.30.0",
+    "swagger-stats": "^0.95.11",
+    "swagger-ui-express": "^4.1.2",
+    "uuid": "^3.3.3",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "cross-env": "^6.0.2"
+  }
+}

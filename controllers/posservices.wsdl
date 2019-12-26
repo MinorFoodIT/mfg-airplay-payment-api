@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="RequestService01">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegMsg01" type="tns:ReqMsg01" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ReqMsg01">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ReqHdr" type="tns:RequestHeader" />
+          <s:element minOccurs="0" maxOccurs="1" name="TrnHdr" type="tns:TransactionHeader" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RequestHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ActCd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReqID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReqDt" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" name="TxID" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="TransactionHeader">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="DOB" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" name="StrCd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TrnMd" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TrnDt" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" name="TerID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ChkNo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StfID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TtlAmt" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="DisAmt" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="DueAmt" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref5" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref6" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref7" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref8" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref9" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref10" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RequestService01Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestService01Result" type="tns:ResMsg01" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ResMsg01">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ResHdr" type="tns:ResponseHeader" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResDtl" type="tns:ResponseDetail" />
+          <s:element minOccurs="1" maxOccurs="1" name="MinorID" type="s:long" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ResponseHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ActCd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResDt" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResCd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResMsg" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ResponseDetail">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ErrCd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrMsgEng" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrMsgThai" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ApvlCd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref5" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref6" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref7" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref8" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref9" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ref10" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RequestService02">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegMsg02" type="tns:ReqMsg02" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ReqMsg02">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ReqMsg01">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="TrnDtl" type="tns:TransactionDetail" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="TransactionDetail">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Items" type="tns:ArrayOfItem" />
+          <s:element minOccurs="0" maxOccurs="1" name="Promos" type="tns:ArrayOfPromo" />
+          <s:element minOccurs="0" maxOccurs="1" name="Comps" type="tns:ArrayOfComp" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Item" nillable="true" type="tns:Item" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Item">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ItmID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PntID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ItmQTY" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ItmAmt" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="ItmDist" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItmCatID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItmCatName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ItmEntID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItmName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PntName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPromo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Promo" nillable="true" type="tns:Promo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Promo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ProID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProNme" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProEntIDs" type="tns:ArrayOfItmEntry" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfItmEntry">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ItmEntry" nillable="true" type="tns:ItmEntry" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ItmEntry">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ItmEntID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfComp">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Comp" nillable="true" type="tns:Comp" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Comp">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ComID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ComNme" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ComEntIDs" type="tns:ArrayOfItmEntry" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RequestService02Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestService02Result" type="tns:ResMsg02" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ResMsg02">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ResMsg01">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="ResItems" type="tns:ArrayOfResItem" />
+              <s:element minOccurs="0" maxOccurs="1" name="ResPromos" type="tns:ArrayOfResPromo" />
+              <s:element minOccurs="0" maxOccurs="1" name="ResComps" type="tns:ArrayOfResComp" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfResItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ResItem" nillable="true" type="tns:ResItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ResItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ItmID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItmName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ItmAmt" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfResPromo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ResPromo" nillable="true" type="tns:ResPromo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ResPromo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ProID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReqEnts" type="tns:ArrayOfReqEnt" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiscEnts" type="tns:ArrayOfDiscEnt" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfReqEnt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ReqEnt" nillable="true" type="tns:ReqEnt" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ReqEnt">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ItmEntID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDiscEnt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DiscEnt" nillable="true" type="tns:DiscEnt" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DiscEnt">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ItmEntID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfResComp">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ResComp" nillable="true" type="tns:ResComp" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ResComp">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ComID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiscEnts" type="tns:ArrayOfDiscEnt" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="JRequestService03">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JReqMsg03" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JRequestService03Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JRequestService03Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JRemoveItemsService03">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JRemMsg03" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JRemoveItemsService03Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JRemoveItemsService03Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JPosResponseService03">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JPosResponse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JPosResponseService03Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JPosResponseService03Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="RequestService01SoapIn">
+    <wsdl:part name="parameters" element="tns:RequestService01" />
+  </wsdl:message>
+  <wsdl:message name="RequestService01SoapOut">
+    <wsdl:part name="parameters" element="tns:RequestService01Response" />
+  </wsdl:message>
+  <wsdl:message name="RequestService02SoapIn">
+    <wsdl:part name="parameters" element="tns:RequestService02" />
+  </wsdl:message>
+  <wsdl:message name="RequestService02SoapOut">
+    <wsdl:part name="parameters" element="tns:RequestService02Response" />
+  </wsdl:message>
+  <wsdl:message name="JRequestService03SoapIn">
+    <wsdl:part name="parameters" element="tns:JRequestService03" />
+  </wsdl:message>
+  <wsdl:message name="JRequestService03SoapOut">
+    <wsdl:part name="parameters" element="tns:JRequestService03Response" />
+  </wsdl:message>
+  <wsdl:message name="JRemoveItemsService03SoapIn">
+    <wsdl:part name="parameters" element="tns:JRemoveItemsService03" />
+  </wsdl:message>
+  <wsdl:message name="JRemoveItemsService03SoapOut">
+    <wsdl:part name="parameters" element="tns:JRemoveItemsService03Response" />
+  </wsdl:message>
+  <wsdl:message name="JPosResponseService03SoapIn">
+    <wsdl:part name="parameters" element="tns:JPosResponseService03" />
+  </wsdl:message>
+  <wsdl:message name="JPosResponseService03SoapOut">
+    <wsdl:part name="parameters" element="tns:JPosResponseService03Response" />
+  </wsdl:message>
+  <wsdl:portType name="PosServicesSoap">
+    <wsdl:operation name="RequestService01">
+      <wsdl:input message="tns:RequestService01SoapIn" />
+      <wsdl:output message="tns:RequestService01SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestService02">
+      <wsdl:input message="tns:RequestService02SoapIn" />
+      <wsdl:output message="tns:RequestService02SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="JRequestService03">
+      <wsdl:input message="tns:JRequestService03SoapIn" />
+      <wsdl:output message="tns:JRequestService03SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="JRemoveItemsService03">
+      <wsdl:input message="tns:JRemoveItemsService03SoapIn" />
+      <wsdl:output message="tns:JRemoveItemsService03SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="JPosResponseService03">
+      <wsdl:input message="tns:JPosResponseService03SoapIn" />
+      <wsdl:output message="tns:JPosResponseService03SoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PosServicesSoap" type="tns:PosServicesSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="RequestService01">
+      <soap:operation soapAction="http://tempuri.org/RequestService01" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestService02">
+      <soap:operation soapAction="http://tempuri.org/RequestService02" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JRequestService03">
+      <soap:operation soapAction="http://tempuri.org/JRequestService03" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JRemoveItemsService03">
+      <soap:operation soapAction="http://tempuri.org/JRemoveItemsService03" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JPosResponseService03">
+      <soap:operation soapAction="http://tempuri.org/JPosResponseService03" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="PosServicesSoap12" type="tns:PosServicesSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="RequestService01">
+      <soap12:operation soapAction="http://tempuri.org/RequestService01" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestService02">
+      <soap12:operation soapAction="http://tempuri.org/RequestService02" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JRequestService03">
+      <soap12:operation soapAction="http://tempuri.org/JRequestService03" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JRemoveItemsService03">
+      <soap12:operation soapAction="http://tempuri.org/JRemoveItemsService03" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JPosResponseService03">
+      <soap12:operation soapAction="http://tempuri.org/JPosResponseService03" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PosServices">
+    <wsdl:port name="PosServicesSoap" binding="tns:PosServicesSoap">
+      <soap:address location="http://localhost:4000/airpay" />
+    </wsdl:port>
+    <wsdl:port name="PosServicesSoap12" binding="tns:PosServicesSoap12">
+      <soap12:address location="http://localhost:4000/airpay" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
