@@ -7,21 +7,22 @@ WORKDIR /home/node/app
 # Arguments
 ARG DB_HOST
 ENV DB_HOST=${DB_HOST}
+RUN echo ${DB_HOST}
 
 USER root
 COPY package.json ./
 RUN npm install
 
 #check file .dockerignore
-COPY --chown=node:node ./bin .
-COPY --chown=node:node ./common .
-COPY --chown=node:node ./controllers .
-COPY --chown=node:node ./model .
-COPY --chown=node:node ./services .
-COPY --chown=node:node ./.env .
-COPY --chown=node:node ./app.js .
-COPY --chown=node:node ./package-lock.json .
-COPY --chown=node:node ./README.md .
+COPY --chown=node:node ./bin /home/node/app
+COPY --chown=node:node ./common /home/node/app
+COPY --chown=node:node ./controllers /home/node/app
+COPY --chown=node:node ./model /home/node/app
+COPY --chown=node:node ./services /home/node/app
+COPY --chown=node:node ./.env /home/node/app
+COPY --chown=node:node ./app.js /home/node/app
+COPY --chown=node:node ./package-lock.json /home/node/app
+COPY --chown=node:node ./README.md /home/node/app
 
 EXPOSE 4000
 
