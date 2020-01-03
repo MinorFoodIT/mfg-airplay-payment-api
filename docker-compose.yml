@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  airpay-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DB_HOST: db
+    container_name: 'airplay-api'
+    restart: 'always' #on-failure
+    #depends_on:
+    #  - db
+    expose:
+      - '4000'
+    ports:
+      - '4000:4000'
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - api_network
+      - postgres_network
+
+networks:
+  postgres_network:
+    external: true
+  api_network:
+    external: true
