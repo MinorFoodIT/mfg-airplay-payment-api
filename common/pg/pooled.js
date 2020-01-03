@@ -4,7 +4,7 @@ var logger = require('./../logging/winston')(__filename);
 
 var dbconfig = {
     user: config.pg_user,
-    host: config.pg_host,
+    host: process.env.DB_HOST,  //config.pg_host,
     password: config.pg_password,
     database: config.pg_database,
     port: config.pg_port,
@@ -13,6 +13,7 @@ var dbconfig = {
     connectionTimeoutMillis: 2000,
 }
 
+console.log(dbconfig);
 const pool = new pg.Pool(dbconfig);
 
 // the pool will emit an error on behalf of any idle clients

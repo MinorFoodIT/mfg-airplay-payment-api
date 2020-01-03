@@ -21,7 +21,7 @@ const saveRawRequest = (req,jsonReq) => {
             })
     })
     .catch(err => {
-        logger.info('[Pool connect] error => '+ e.stack);
+        logger.info('[Pool connect] error => '+ err.stack);
     })
 
 }
@@ -47,7 +47,7 @@ const saveReqId = (reqTimeMs,reqId,reqEndpoint,reqType,reqMessage) => {
             })
   })
   .catch(err => {
-    logger.info('[Pool connect] error => '+ e.stack);
+    logger.info('[Pool connect] error => '+ err.stack);
   })
 }
 
@@ -66,7 +66,7 @@ const savePaymentRequest = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointSe
             })
   })
   .catch(err => {
-    logger.info('[Pool connect] error => '+ e.stack);
+    logger.info('[Pool connect] error => '+ err.stack);
   })
 }
 
@@ -89,7 +89,7 @@ const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointS
             })
   })
   .catch(err => {
-    logger.info('[Pool connect] error => '+ e.stack);
+    logger.info('[Pool connect] error => '+ err.stack);
   })
 }
 
