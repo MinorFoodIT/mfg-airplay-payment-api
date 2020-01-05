@@ -3,9 +3,10 @@ const request = require('request')
 const moment = require('moment');
 var logger = require('./../../common/logging/winston')(__filename);
 const dao = require('./../dbClient');
+const config = require('./../../common/config');
 
-const secret = 'ZbAVXzQuwZlB6O0xR0PCv6rY4KTldiCL';
-const partnerId = '131410201234';
+const secret = config.app_secret;
+const partnerId = config.partner_id;
 const serviceAP = {
     "pay" : 'ap.pay',
     "refund": 'ap.refund',
@@ -89,7 +90,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
             callback(null,resMsgBody.error_code);
         }else{
 
-            
+
             callback(null,resMsgBody.data);
         }
     }

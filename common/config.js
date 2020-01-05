@@ -37,6 +37,9 @@ const config = {
     pg_user: envVars.pg_user,
     pg_password: envVars.pg_password,
     pg_database: envVars.pg_database,
+
+    partner_id: envVars.partner_id,
+    app_secret: envVars.app_secret
 }
 
 module.exports = config;
