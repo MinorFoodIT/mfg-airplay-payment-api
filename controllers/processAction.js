@@ -75,9 +75,10 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs) => {
         })
         .catch(err => {
             return resMsg01;
-        })
-
-        
+        }) 
+    }else{
+       //Invalid action code
+       return Object.assign({},_resMsg01);
     }
 }
 //Request message type 02

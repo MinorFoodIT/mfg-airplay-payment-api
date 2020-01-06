@@ -18,30 +18,30 @@ const payURL = 'https://api.airpay.in.th/pay/barcode/pay';
 
 const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     var payData = {
-        trans_amount: 0,
-        currency: 'THB',
-        merchant_name: 'SG_DQ',
+        partner_tran_id: '2010121000000002',
+        buyer_code_type: 'qrcode', //'barcode',
+        buyer_code: 'APTH13112012345678',
         trans_create_time: moment().format('YYYYMMDDHHmmss'),
         trans_name: 'instore',
-        buyer_code_type: 'qrcode', //'barcode',
-        store_name: 'Rama4',
+        trans_amount: 0,
+        currency: 'THB',
         merchant_type: '5995',
-        partner_tran_id: '2010121000000002',
-        buyer_code: 'APTH13112012345678',
         merchant_id: 'Teminal_1026',
-        memo: 'dine in',
-        store_id: 'DQ1113'
+        merchant_name: 'SG_DQ',
+        store_id: 'DQ1113',
+        store_name: 'Rama4',
+        memo: 'dine in'
     }
 
-    payData["merchant_name"]        = 'SG_DQ'
-    payData["trans_amount"]         = Number(TrnHdr["TtlAmt"].concat('00'));
-    payData["buyer_code"]           = TrnHdr["Ref1"];
-    payData["trans_name"]           = TrnHdr["Ref2"];
-    payData["store_name"]           = TrnHdr["Ref3"]; //bu code
-    payData["store_id"]             = TrnHdr["StrCd"];
-    payData["merchant_id"]          = TrnHdr["StrCd"];
-    payData["trans_create_time"]    = TrnHdr["TrnDt"];
     payData["partner_tran_id"]      = reqTimeMs+'-'+ReqHdr["TxID"];
+    payData["buyer_code"]           = TrnHdr["Ref1"];
+    payData["trans_create_time"]    = TrnHdr["TrnDt"];
+    payData["trans_name"]           = TrnHdr["Ref2"];
+    payData["trans_amount"]         = Number(TrnHdr["TtlAmt"].concat('00'));
+    payData["merchant_id"]          = TrnHdr["StrCd"];
+    payData["merchant_name"]        = 'SG_DQ'
+    payData["store_id"]             = TrnHdr["StrCd"];
+    payData["store_name"]           = TrnHdr["Ref3"]; //bu code
     payData["memo"]                 = reqTimeMs
 
     return JSON.stringify(payData);
