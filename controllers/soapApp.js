@@ -19,41 +19,41 @@ var service = {
         RequestService01: function (args,cb,headers, req) {
           //console.log(req.connection);//.Socket.parser.HTTPParser.parsingHeadersStart);  
           var reqTimeMs = new Date().getTime();        
-          saveRequestMessage01(args,reqTimeMs);
+          saveRequestMessage(args,reqTimeMs);
 
           var responseXML = mapRequestToResponse(args)
           var actionCode = helper.isNullEmptry(args["RegMsg01"]["ReqHdr"]["ActCd"])?'': args["RegMsg01"]["ReqHdr"]["ActCd"]
 
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
-            logger.info('Callback resp '+JSON.stringify(resp));
+            logger.info('[RequestService01] callback processAction resp '+JSON.stringify(resp));
             //if(resp[])
             cb(responseXML);
           })
           .catch((err) => {
-            logger.info('ProcessActionError => '+err);
+            logger.info('[RequestService01] processAction error => '+err);
           })
           
-          // var response = {
-          //   ResMsg01:{
-          //       MinorID: '1234',
-          //       ResHdr: {},
-          //       ResDtl: {}
-          //   }
-          // };
-          // return response;
-        }
-        
-        // RequestService02: function (args) {
-        //   return {
-        //       greeting: args.firstName
-        //   };
-        // },
-        // RequestService03: function (args) {
-        //     return {
-        //         greeting: args.firstName
-        //     };
-        //   }
+        },
+        RequestService02: function (args,cb,headers, req) {
+          var reqTimeMs = new Date().getTime();        
+          saveRequestMessage(args,reqTimeMs);
+          var responseXML = mapRequestToResponse(args)
+          var actionCode = helper.isNullEmptry(args["RegMsg02"]["ReqHdr"]["ActCd"])?'': args["RegMsg02"]["ReqHdr"]["ActCd"]
+          processAction(actionCode,args,reqTimeMs)
+          .then( (resp) => {
+            logger.info('[RequestService02] callback processAction resp => '+JSON.stringify(resp));
+            cb(responseXML);
+          })
+          .catch((err) => {
+            logger.info('RequestService02] processAction error => '+err);
+          })
+        },
+        RequestService03: function (args) {
+            return {
+                greeting: args.firstName
+            };
+        },
       }
     }
   };
@@ -153,28 +153,57 @@ function mapRequestToResponse(args){
       responseJson["ResMsg01"]["ResDtl"]["ErrMsgThai"] = '';
       responseJson["ResMsg01"]["ResDtl"]["ApvlCd"] = '';
       responseJson["ResMsg01"]["ResDtl"]["Ref1"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref2"] = '';
+      responseJson["ResMsg01"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
       responseJson["ResMsg01"]["ResDtl"]["Ref3"] = '';
       responseJson["ResMsg01"]["ResDtl"]["Ref4"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref5"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref6"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref7"] = '';
+      responseJson["ResMsg01"]["ResDtl"]["Ref5"] = args["RegMsg01"]["TrnHdr"]["TtlAmt"];
+      responseJson["ResMsg01"]["ResDtl"]["Ref6"] = args["RegMsg01"]["TrnHdr"]["TrnDt"];
+      responseJson["ResMsg01"]["ResDtl"]["Ref7"] = args["RegMsg01"]["TrnHdr"]["ChkNo"];
       responseJson["ResMsg01"]["ResDtl"]["Ref8"] = '';
       responseJson["ResMsg01"]["ResDtl"]["Ref9"] = '';
       responseJson["ResMsg01"]["ResDtl"]["Ref10"] = '';
 
       responseJson["ResMsg01"]["MinorID"] = uuidV1();
       
+    }else if(args["RegMsg02"]){
+      responseJson["RegMsg02"] = {}
+      responseJson["RegMsg02"]["ResHdr"] = {}
+      responseJson["RegMsg02"]["ResDtl"] = {}
+
+      responseJson["RegMsg02"]["ResHdr"]["ActCd"]  =  args["RegMsg02"]["ReqHdr"]["ActCd"];
+      responseJson["RegMsg02"]["ResHdr"]["ResID"]  =  args["RegMsg02"]["ReqHdr"]["ReqID"];
+      responseJson["RegMsg02"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
+      responseJson["RegMsg02"]["ResHdr"]["ResCd"]  = '';
+      responseJson["RegMsg02"]["ResHdr"]["ResMsg"] = '';
+      
+      responseJson["RegMsg02"]["ResDtl"]["ErrCd"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["ErrMsgEng"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["ErrMsgThai"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["ApvlCd"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["Ref1"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
+      responseJson["RegMsg02"]["ResDtl"]["Ref3"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["Ref4"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["Ref5"] = args["RegMsg02"]["TrnHdr"]["TtlAmt"];
+      responseJson["RegMsg02"]["ResDtl"]["Ref6"] = args["RegMsg02"]["TrnHdr"]["TrnDt"];
+      responseJson["RegMsg02"]["ResDtl"]["Ref7"] = args["RegMsg02"]["TrnHdr"]["ChkNo"];
+      responseJson["RegMsg02"]["ResDtl"]["Ref8"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["Ref9"] = '';
+      responseJson["RegMsg02"]["ResDtl"]["Ref10"] = '';
+
+      responseJson["RegMsg02"]["MinorID"] = uuidV1();
     }
     return responseJson;
 }
 
-function saveRequestMessage01(request,reqTimeMs){
+function saveRequestMessage(request,reqTimeMs){
   //if(request["Body"]["RequestService01"]["RegMsg01"]["ReqHdr"]["ReqID"]){
   if(request["RegMsg01"]["ReqHdr"]["ReqID"]){ 
     let reqId = request["RegMsg01"]["ReqHdr"]["ReqID"]
     dao.saveReqId(reqTimeMs,reqId,'','message01',JSON.stringify(request))
-
+  }else if(request["RegMsg02"]["ReqHdr"]["ReqID"]){
+    let reqId = request["RegMsg02"]["ReqHdr"]["ReqID"]
+    dao.saveReqId(reqTimeMs,reqId,'','message02',JSON.stringify(request))
   }
 } 
 

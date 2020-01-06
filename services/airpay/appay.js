@@ -16,7 +16,7 @@ const serviceAP = {
 const signType = 'MD5';
 const payURL = 'https://testapi.airpay.in.th/pay/barcode/pay';
 
-const mapAtg01ToAP = (ReqHdr,TrnHdr) => {
+const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     var payData = {
         trans_amount: 0,
         currency: 'THB',
@@ -33,13 +33,16 @@ const mapAtg01ToAP = (ReqHdr,TrnHdr) => {
         store_id: 'DQ1113'
     }
 
+    payData["merchant_name"]        = 'SG_DQ'
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"].concat('00'));
     payData["buyer_code"]           = TrnHdr["Ref1"];
     payData["trans_name"]           = TrnHdr["Ref2"];
-    payData["store_name"]           = TrnHdr["Ref3"];
+    payData["store_name"]           = TrnHdr["Ref3"]; //bu code
     payData["store_id"]             = TrnHdr["StrCd"];
+    payData["merchant_id"]          = TrnHdr["StrCd"];
     payData["trans_create_time"]    = TrnHdr["TrnDt"];
-    payData["partner_tran_id"]      = ReqHdr["TxID"];
+    payData["partner_tran_id"]      = reqTimeMs+'-'+ReqHdr["TxID"];
+    payData["memo"]                 = reqTimeMs
 
     return JSON.stringify(payData);
 }
@@ -50,7 +53,7 @@ const mapResToATG = () => {
 
 const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    
-   let data = mapAtg01ToAP(ReqHdr,TrnHdr); 
+   let data = mapAtg01ToAP(reqTimeMs,ReqHdr,TrnHdr); 
    //prepare message to sign
    let textToMD5 = partnerId.concat(serviceAP["pay"],data,signType,secret);
    logger.info('[payService] target to sign => ');
@@ -70,17 +73,17 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    console.log(JSON.stringify(apReqBody));
 
    //Send request to pay service
-   dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay',null,null,null,'sending',1);
+   dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
    request.post(payURL, {
     json: JSON.stringify(apReqBody)
    }, (error, res, body) => {
     if (error) {
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay',JSON.stringify(error),error,null,'error',1);
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(error),error,null,'error',1);
         logger.info('[ap.pay] error '+error)
         //return
         callback(error,null);
     }else{
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay',JSON.stringify(body),body,null,'sent',1);
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(body),body,null,'sent',1);
         logger.info('[Airpay] pay->return '+`statusCode: ${res.statusCode}`)
         logger.info(body) 
 
@@ -89,15 +92,11 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
             //have error code
             callback(null,resMsgBody.error_code);
         }else{
-
-
             callback(null,resMsgBody.data);
         }
     }
    })
 
 }
-
-
 
 module.exports = payService
