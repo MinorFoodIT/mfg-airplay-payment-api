@@ -57,9 +57,11 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    //prepare message to sign
    let textToMD5 = partnerId.concat(serviceAP["pay"],data,signType,secret);
    logger.info('[payService] target to sign => ');
-   logger.info(textToMD5);
-    //sign message
-   let sign = crypto.createHash('md5').update('textToMD5').digest("hex");
+   //logger.info(textToMD5);
+   console.log(textToMD5); 
+   
+   //sign message
+   let sign = crypto.createHash('md5').update(textToMD5).digest("hex");
    logger.info('[payService] message signed '+sign);
 
    var apReqBody = {
@@ -87,7 +89,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         logger.info('[Airpay] pay->return '+`statusCode: ${res.statusCode}`)
         //logger.info(body) 
         logger.info(res) 
-        
+
         let resMsgBody = body
         if(body["error_code"] && body["error_code"].length > 0 ){
             //have error code
