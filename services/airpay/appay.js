@@ -14,7 +14,7 @@ const serviceAP = {
     "notify": 'ap.notify'
 }
 const signType = 'MD5';
-const payURL = 'https://testapi.airpay.in.th/pay/barcode/pay';
+const payURL = 'https://api.airpay.in.th/pay/barcode/pay';
 
 const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     var payData = {
