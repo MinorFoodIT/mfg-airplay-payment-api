@@ -85,8 +85,9 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     }else{
         dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(body),body,null,'sent',1);
         logger.info('[Airpay] pay->return '+`statusCode: ${res.statusCode}`)
-        logger.info(body) 
-
+        //logger.info(body) 
+        logger.info(res) 
+        
         let resMsgBody = body
         if(body["error_code"] && body["error_code"].length > 0 ){
             //have error code
