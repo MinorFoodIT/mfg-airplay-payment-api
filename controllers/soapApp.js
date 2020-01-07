@@ -145,8 +145,8 @@ function assignResCode(massageType,responseXML,resp) {
   console.log(resp);
 
   if(massageType === '01'){
-    responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ReqHdr"]["ResCd"];
-    responseXML["ResMsg01"]["ResHdr"]["ResMsg"] = resp["ReqHdr"]["ResMsg"];
+    responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+    responseXML["ResMsg01"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
     responseXML["ResMsg01"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
     responseXML["ResMsg01"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
     responseXML["ResMsg01"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
@@ -159,8 +159,8 @@ function assignResCode(massageType,responseXML,resp) {
     responseXML["ResMsg01"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
     responseXML["ResMsg01"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
   }else if(massageType === '02'){
-    responseXML["ResMsg02"]["ResHdr"]["ResCd"]  = resp["ReqHdr"]["ResCd"];
-    responseXML["ResMsg02"]["ResHdr"]["ResMsg"] = resp["ReqHdr"]["ResMsg"];
+    responseXML["ResMsg02"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+    responseXML["ResMsg02"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
     responseXML["ResMsg02"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
     responseXML["ResMsg02"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
     responseXML["ResMsg02"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
