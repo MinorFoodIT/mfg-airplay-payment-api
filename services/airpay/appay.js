@@ -5,6 +5,7 @@ const moment = require('moment');
 var logger = require('./../../common/logging/winston')(__filename);
 const dao = require('./../dbClient');
 const config = require('./../../common/config');
+var helper = require('./../../common/helper');
 
 const secret = config.app_secret;
 const partnerId = config.partner_id;
@@ -79,9 +80,9 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
    axios.post(payURL, apReqBody)
    .then(res => {
-    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res),res,null,'sent',1);
-    logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
     logger.info(res); 
+    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',helper.isObject(res)?JSON.stringify(res):res,res,null,'sent',1);
+    logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
     
     let resMsgBody = res.data; //body
     if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
@@ -92,7 +93,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     }
    })
    .catch(error => {
-    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(error),error,null,'error',1);
+    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error,error,null,'error',1);
     logger.info('[ap.pay] error '+error)
     //return
     callback(error,null);
