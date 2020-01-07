@@ -80,8 +80,10 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
    axios.post(payURL, apReqBody)
    .then(res => {
-    console.log(res); 
-    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',helper.isObject(res)?JSON.stringify(res):res,res,null,'sent',1);
+    console.log(res);
+    if(helper.isObject(res.data)){
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1);
+    }
     logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
     
     let resMsgBody = res.data; //body
@@ -93,7 +95,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     }
    })
    .catch(error => {
-    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error,error,null,'error',1);
+    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error',1);
     logger.info('[ap.pay] error '+error)
     //return
     callback(error,null);
