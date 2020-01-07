@@ -80,7 +80,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
    axios.post(payURL, apReqBody)
    .then(res => {
-    logger.info(res); 
+    console.log(res); 
     dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',helper.isObject(res)?JSON.stringify(res):res,res,null,'sent',1);
     logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
     
