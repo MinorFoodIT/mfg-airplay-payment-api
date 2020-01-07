@@ -51,6 +51,24 @@ const saveReqId = (reqTimeMs,reqId,reqEndpoint,reqType,reqMessage) => {
   })
 }
 
+const saveResId = (reqTimeMs,reqId,reqEndpoint,resType,resMessage) => {
+    pool.connect()
+    .then(client => {
+        return client.query('UPDATE requests SET response_type = $4 ,response_message =$5  ' +
+                            ' where request_id= $1 and tran_request_id=$2 and request_endpoint=$3 ', [reqTimeMs,reqId,reqEndpoint,resType,resMessage])
+            .then(res => {
+                client.release();
+            })
+            .catch(e => {
+                client.release();
+                logger.info('[saveResId] error => '+ e.stack);
+            })
+  })
+  .catch(err => {
+    logger.info('[Pool connect] error => '+ err.stack);
+  })
+}
+
 //ReqId,JSON.stringify(apReqBody),apReqBody,'airpay',null,null,null,'sending',1
 const savePaymentRequest = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointService,resMessage,resJsonMessage,resTime,status,seq) => {
     pool.connect()
@@ -93,4 +111,4 @@ const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointS
   })
 }
 
-module.exports = {saveReqId,saveRawRequest ,savePaymentRequest ,savePaymentResponse}
+module.exports = {saveReqId ,saveResId ,saveRawRequest ,savePaymentRequest ,savePaymentResponse}

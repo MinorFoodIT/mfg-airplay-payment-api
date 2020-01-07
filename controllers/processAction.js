@@ -5,7 +5,7 @@ var payService = Promise.promisify(require('./../services/airpay/appay'));
 var apResCode = require('./../model/apResCode');
 var resCode = require('./../model/resCode');
 
-var _resMsg01 ,_resMsg02 = {
+const _resMsg01_02 = {
     "ResHdr": {
         "ResCd":  '',
         "ResMsg": ''
@@ -27,6 +27,7 @@ var _resMsg01 ,_resMsg02 = {
         "Ref10": '',
     }
 }
+
 //ATG message incoming
 const processAction = async (actionCode ,atgReq,reqTimeMs,callback) => {
     if( atgReq["RegMsg01"] ){
@@ -45,7 +46,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
 
     if(actionCode === 'APPAY'){
         logger.info('Call AP.PAY service');
-        let resMsg01 = Object.assign({},_resMsg01);
+        let resMsg01 = Object.assign({},_resMsg01_02);
         //invoke airpay api
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
@@ -93,7 +94,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
         }) 
     }else{
        //Invalid action code
-       let resMsg01 = Object.assign({},_resMsg01);
+       let resMsg01 = Object.assign({},_resMsg01_02);
        resMsg01.ResHdr.ResCd = '8006';
        resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
        resMsg01.ResDtl.ErrCd = '8006';
@@ -112,7 +113,7 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
 
     if(actionCode === 'APPAY'){
         logger.info('Call AP.PAY service');
-        let resMsg02 = Object.assign({},_resMsg02);
+        let resMsg02 = Object.assign({},_resMsg01_02);
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
             if(helper.isString(apResp)){
@@ -158,7 +159,7 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
 
     }else{
         //Invalid action code
-       let resMsg02 = Object.assign({},_resMsg02);
+       let resMsg02 = Object.assign({},_resMsg01_02);
        resMsg02.ResHdr.ResCd = '8006';
        resMsg02.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
        resMsg02.ResDtl.ErrCd = '8006';

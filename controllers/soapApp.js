@@ -28,12 +28,16 @@ var service = {
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService01] processAction resp '+JSON.stringify(resp));
-            cb(assignResCode('01',responseXML,resp,null));
+            let _responseXML = assignResCode('01',responseXML,resp,null);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg01"]["ReqHdr"]["ReqID"],'','message01',_responseXML);
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
             console.log(err.stack);
-            cb(assignResCode('01',responseXML,null,err));
+            let _responseXML = assignResCode('01',responseXML,null,err);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg01"]["ReqHdr"]["ReqID"],'','error_message01',_responseXML);
           })
           
         },
@@ -46,12 +50,16 @@ var service = {
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService02] processAction resp => '+JSON.stringify(resp));
-            cb(assignResCode('02',responseXML,resp,null));
+            let _responseXML = assignResCode('02',responseXML,resp,null);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg02"]["ReqHdr"]["ReqID"],'','message02',_responseXML);
           })
           .catch((err) => {
             logger.info('RequestService02] processAction error => '+err);
             console.log(err.stack);
-            cb(assignResCode('02',responseXML,null,err));
+            let _responseXML = assignResCode('02',responseXML,null,err);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg02"]["ReqHdr"]["ReqID"],'','error_message02',_responseXML);
           })
         },
         RequestService03: function (args) {
