@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const request = require('request')
+//const request = require('request'); //{ json: JSON.stringify(apReqBody)}
+const axios = require('axios');
 const moment = require('moment');
 var logger = require('./../../common/logging/winston')(__filename);
 const dao = require('./../dbClient');
@@ -76,29 +77,26 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
 
    //Send request to pay service
    dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
-   request.post(payURL, {
-    json: JSON.stringify(apReqBody)
-   }, (error, res, body) => {
-    if (error) {
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(error),error,null,'error',1);
-        logger.info('[ap.pay] error '+error)
-        //return
-        callback(error,null);
+   axios.post(payURL, apReqBody)
+   .then(res => {
+    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(body),body,null,'sent',1);
+    logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
+    logger.info(res); 
+    
+    let resMsgBody = res.data; //body
+    if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
+        //have error code
+        callback(null,resMsgBody.error_code);
     }else{
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(body),body,null,'sent',1);
-        logger.info('[Airpay] pay->return '+`statusCode: ${res.statusCode}`)
-        //logger.info(body) 
-        logger.info(res) 
-
-        let resMsgBody = body
-        if(body["error_code"] && body["error_code"].length > 0 ){
-            //have error code
-            callback(null,resMsgBody.error_code);
-        }else{
-            callback(null,resMsgBody.data);
-        }
+        callback(null,resMsgBody.data);
     }
    })
+   .catch(error => {
+    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(error),error,null,'error',1);
+    logger.info('[ap.pay] error '+error)
+    //return
+    callback(error,null);
+   }) 
 
 }
 
