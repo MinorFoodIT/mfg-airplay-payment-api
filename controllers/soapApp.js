@@ -94,7 +94,8 @@ const soapApp = (app) => {
                 }
             }else if(type === 'replied')
             {
-                //logger.info(data);
+                logger.info('replied =>');
+                logger.info(data);
             }else{
                 //type is info
                 //logger.info('Info: '+data);
@@ -112,7 +113,7 @@ const soapApp = (app) => {
         //Map response  
         soapServer.on('response', function(response, methodName){
           //console.log(httpContext.get('reqId'));
-            //logger.info('responseXML => '+ JSON.stringify(response));
+            logger.info('responseXML => '+ JSON.stringify(response));
                 //assert.equal(response.result, responseXML);
                 //assert.equal(methodName, 'sayHello');
                 //response.result = response.result.replace('Bob','John');
@@ -138,11 +139,11 @@ function normalizePort(val) {
   }
 
 function assignResCode(massageType,responseXML,resp) {
-  logger.info('responseXML => ');
-  console.log(responseXML);
+  // logger.info('responseXML => ');
+  // console.log(responseXML);
 
-  logger.info('resp => ');
-  console.log(resp);
+  // logger.info('resp => ');
+  // console.log(resp);
 
   if(massageType === '01'){
     responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
