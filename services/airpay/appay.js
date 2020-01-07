@@ -44,7 +44,7 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["merchant_name"]        = 'SG_DQ'
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
-    payData["memo"]                 = reqTimeMs
+    payData["memo"]                 = String(reqTimeMs)
     return JSON.stringify(payData);
 }
 
