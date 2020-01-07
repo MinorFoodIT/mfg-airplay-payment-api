@@ -22,18 +22,17 @@ const _resMsg01 = {
     }
 }
 //ATG message incoming
-const processAction =  (actionCode ,atgReq,reqTimeMs,callback) => {
+const processAction = async (actionCode ,atgReq,reqTimeMs,callback) => {
     if( atgReq["RegMsg01"] ){
-       var resMsg01 = processMsg01(actionCode,atgReq,reqTimeMs);
-       callback(null,resMsg01);
+       processMsg01(actionCode,atgReq,reqTimeMs,callback);
     }else if(atgReq["RegMsg02"]){
-        var resMsg02 = processMsg02(actionCode,atgReq,reqTimeMs);
-        callback(null,resMsg02);
+       processMsg02(actionCode,atgReq,reqTimeMs,callback);
+       //callback(null,resMsg02);
     }
 }
 
 //Request message type 01
-const processMsg01 = (actionCode ,atgReq ,reqTimeMs) => {
+const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
     var ReqHdr = atgReq["RegMsg01"]["ReqHdr"];
     var TrnHdr = atgReq["RegMsg01"]["TrnHdr"];
     var ReqId  = atgReq["RegMsg01"]["ReqHdr"]["ReqID"];
@@ -64,18 +63,26 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs) => {
                         resMsg01.ResDtl.ErrMsgThai = resCode.code["8006"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                     }
+                    callback(null,resMsg01); 
                 }else{ //error_code
                     resMsg01.ResHdr.ResCd = '8006';
                     resMsg01.ResHdr.ResMsg = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];
                     resMsg01.ResDtl.ErrCd = '8006';
                     resMsg01.ResDtl.ErrMsgThai = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];
-                    resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];   
+                    resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];  
+                    callback(null,resMsg01); 
                 }
             }
-            return resMsg01;
+           
         })
         .catch(err => {
-            return resMsg01;
+            resMsg01.ResHdr.ResCd = '8006';
+            resMsg01.ResHdr.ResMsg = resCode.code["8006"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
+            resMsg01.ResDtl.ErrCd = '8006';
+            resMsg01.ResDtl.ErrCd = '8006';
+            resMsg01.ResDtl.ErrMsgThai = err.message;
+            resMsg01.ResDtl.ErrMsgEng  = err.message
+            callback(null,resMsg01); 
         }) 
     }else{
        //Invalid action code
@@ -83,7 +90,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs) => {
     }
 }
 //Request message type 02
-const processMsg02 = (actionCode ,atgReq ,reqTimeMs) => {
+const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
     var ReqHdr = atgReq["RegMsg02"]["ReqHdr"];
     var TrnHdr = atgReq["RegMsg02"]["TrnHdr"];
     var ReqId  = atgReq["RegMsg02"]["ReqHdr"]["ReqID"];
