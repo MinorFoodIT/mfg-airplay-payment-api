@@ -145,101 +145,101 @@ function assignResCode(massageType,responseXML,resp) {
   // logger.info('resp => ');
   // console.log(resp);
 
-  var RequestServiceResult = {};
+  //var RequestServiceResult = {};
 
   if(massageType === '01'){
-    responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
-    responseXML["ResMsg01"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
-    responseXML["ResMsg01"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
-    responseXML["ResMsg01"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
-    responseXML["ResMsg01"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
-    responseXML["ResMsg01"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
-    responseXML["ResMsg01"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+    responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
+    responseXML["RequestService01Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+    responseXML["RequestService01Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+    responseXML["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+    responseXML["RequestService01Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+    responseXML["RequestService01Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
 
-    RequestServiceResult["RequestService01Result"] = responseXML; 
+    //RequestServiceResult["RequestService01Result"] = responseXML; 
   }else if(massageType === '02'){
-    responseXML["ResMsg02"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
-    responseXML["ResMsg02"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
-    responseXML["ResMsg02"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
-    responseXML["ResMsg02"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
-    responseXML["ResMsg02"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
-    responseXML["ResMsg02"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
-    responseXML["ResMsg02"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
-    RequestServiceResult["RequestService02Result"] = responseXML; 
+    responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+    responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
+    responseXML["RequestService02Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+    responseXML["RequestService02Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+    responseXML["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+    responseXML["RequestService02Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+    responseXML["RequestService02Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    //RequestServiceResult["RequestService02Result"] = responseXML; 
   }
   
-  return RequestServiceResult;
+  return responseXML;
 } 
 
 function mapRequestToResponse(args){
     var responseJson = {};
     if(args["RegMsg01"]){
-      responseJson["ResMsg01"] = {}
-      responseJson["ResMsg01"]["ResHdr"] = {}
-      responseJson["ResMsg01"]["ResDtl"] = {}
+      responseJson["RequestService01Result"] = {}
+      responseJson["RequestService01Result"]["ResHdr"] = {}
+      responseJson["RequestService01Result"]["ResDtl"] = {}
 
-      responseJson["ResMsg01"]["ResHdr"]["ActCd"]  =  args["RegMsg01"]["ReqHdr"]["ActCd"];
-      responseJson["ResMsg01"]["ResHdr"]["ResID"]  =  args["RegMsg01"]["ReqHdr"]["ReqID"];
-      responseJson["ResMsg01"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
-      responseJson["ResMsg01"]["ResHdr"]["ResCd"]  = '';
-      responseJson["ResMsg01"]["ResHdr"]["ResMsg"] = '';
+      responseJson["RequestService01Result"]["ResHdr"]["ActCd"]  =  args["RegMsg01"]["ReqHdr"]["ActCd"];
+      responseJson["RequestService01Result"]["ResHdr"]["ResID"]  =  args["RegMsg01"]["ReqHdr"]["ReqID"];
+      responseJson["RequestService01Result"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
+      responseJson["RequestService01Result"]["ResHdr"]["ResCd"]  = '';
+      responseJson["RequestService01Result"]["ResHdr"]["ResMsg"] = '';
       
-      responseJson["ResMsg01"]["ResDtl"]["ErrCd"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ErrMsgEng"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ErrMsgThai"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ApvlCd"] = args["RegMsg01"]["ReqHdr"]["ActCd"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref1"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref3"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref4"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref5"] = args["RegMsg01"]["TrnHdr"]["TtlAmt"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref6"] = args["RegMsg01"]["TrnHdr"]["TrnDt"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref7"] = args["RegMsg01"]["TrnHdr"]["ChkNo"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref8"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref9"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref10"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ErrCd"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ErrMsgEng"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ApvlCd"] = args["RegMsg01"]["ReqHdr"]["ActCd"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref1"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref3"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref4"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref5"] = args["RegMsg01"]["TrnHdr"]["TtlAmt"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref6"] = args["RegMsg01"]["TrnHdr"]["TrnDt"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref7"] = args["RegMsg01"]["TrnHdr"]["ChkNo"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref8"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref9"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref10"] = '';
 
-      responseJson["ResMsg01"]["MinorID"] = 0; //uuidV1();
+      responseJson["RequestService01Result"]["MinorID"] = 0; //uuidV1();
       
     }else if(args["RegMsg02"]){
-      responseJson["RegMsg02"] = {}
-      responseJson["RegMsg02"]["ResHdr"] = {}
-      responseJson["RegMsg02"]["ResDtl"] = {}
+      responseJson["RequestService02Result"] = {}
+      responseJson["RequestService02Result"]["ResHdr"] = {}
+      responseJson["RequestService02Result"]["ResDtl"] = {}
 
-      responseJson["RegMsg02"]["ResHdr"]["ActCd"]  =  args["RegMsg02"]["ReqHdr"]["ActCd"];
-      responseJson["RegMsg02"]["ResHdr"]["ResID"]  =  args["RegMsg02"]["ReqHdr"]["ReqID"];
-      responseJson["RegMsg02"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
-      responseJson["RegMsg02"]["ResHdr"]["ResCd"]  = '';
-      responseJson["RegMsg02"]["ResHdr"]["ResMsg"] = '';
+      responseJson["RequestService02Result"]["ResHdr"]["ActCd"]  =  args["RegMsg02"]["ReqHdr"]["ActCd"];
+      responseJson["RequestService02Result"]["ResHdr"]["ResID"]  =  args["RegMsg02"]["ReqHdr"]["ReqID"];
+      responseJson["RequestService02Result"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
+      responseJson["RequestService02Result"]["ResHdr"]["ResCd"]  = '';
+      responseJson["RequestService02Result"]["ResHdr"]["ResMsg"] = '';
       
-      responseJson["RegMsg02"]["ResDtl"]["ErrCd"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["ErrMsgEng"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["ErrMsgThai"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["ApvlCd"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref1"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref3"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref4"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref5"] = args["RegMsg02"]["TrnHdr"]["TtlAmt"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref6"] = args["RegMsg02"]["TrnHdr"]["TrnDt"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref7"] = args["RegMsg02"]["TrnHdr"]["ChkNo"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref8"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref9"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref10"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ErrCd"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ErrMsgEng"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ApvlCd"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref1"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref3"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref4"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref5"] = args["RegMsg02"]["TrnHdr"]["TtlAmt"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref6"] = args["RegMsg02"]["TrnHdr"]["TrnDt"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref7"] = args["RegMsg02"]["TrnHdr"]["ChkNo"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref8"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref9"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref10"] = '';
 
-      responseJson["RegMsg02"]["MinorID"] = 0; //uuidV1();
+      responseJson["RequestService02Result"]["MinorID"] = 0; //uuidV1();
     }
     return responseJson;
 }
