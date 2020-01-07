@@ -145,6 +145,8 @@ function assignResCode(massageType,responseXML,resp) {
   // logger.info('resp => ');
   // console.log(resp);
 
+  var RequestServiceResult = {};
+
   if(massageType === '01'){
     responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
     responseXML["ResMsg01"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
@@ -159,6 +161,8 @@ function assignResCode(massageType,responseXML,resp) {
     responseXML["ResMsg01"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
     responseXML["ResMsg01"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
     responseXML["ResMsg01"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+
+    RequestServiceResult["RequestService01Result"] = responseXML; 
   }else if(massageType === '02'){
     responseXML["ResMsg02"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
     responseXML["ResMsg02"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
@@ -173,8 +177,10 @@ function assignResCode(massageType,responseXML,resp) {
     responseXML["ResMsg02"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
     responseXML["ResMsg02"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
     responseXML["ResMsg02"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    RequestServiceResult["RequestService02Result"] = responseXML; 
   }
-  return responseXML;
+  
+  return RequestServiceResult;
 } 
 
 function mapRequestToResponse(args){
@@ -233,7 +239,7 @@ function mapRequestToResponse(args){
       responseJson["RegMsg02"]["ResDtl"]["Ref9"] = '';
       responseJson["RegMsg02"]["ResDtl"]["Ref10"] = '';
 
-      responseJson["RegMsg02"]["MinorID"] = uuidV1();
+      responseJson["RegMsg02"]["MinorID"] = 0; //uuidV1();
     }
     return responseJson;
 }
