@@ -27,8 +27,8 @@ var service = {
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService01] callback processAction resp '+JSON.stringify(resp));
-            //if(resp[])
-            cb(responseXML);
+            
+            return assignResCode('01',responseXML,resp);
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
@@ -43,7 +43,7 @@ var service = {
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService02] callback processAction resp => '+JSON.stringify(resp));
-            cb(responseXML);
+            return assignResCode('02',responseXML,resp);
           })
           .catch((err) => {
             logger.info('RequestService02] processAction error => '+err);
@@ -134,6 +134,39 @@ function normalizePort(val) {
     }
     return false;
   }
+
+function assignResCode(massageType,responseXML,resp) {
+  if(massageType === '01'){
+    responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ReqHdr"]["ResCd"];
+    responseXML["ResMsg01"]["ResHdr"]["ResMsg"] = resp["ReqHdr"]["ResMsg"];
+    responseXML["ResMsg01"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+    responseXML["ResMsg01"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+    responseXML["ResMsg01"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+    responseXML["ResMsg01"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+    responseXML["ResMsg01"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+  }else if(massageType === '02'){
+    responseXML["ResMsg02"]["ResHdr"]["ResCd"]  = resp["ReqHdr"]["ResCd"];
+    responseXML["ResMsg02"]["ResHdr"]["ResMsg"] = resp["ReqHdr"]["ResMsg"];
+    responseXML["ResMsg02"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+    responseXML["ResMsg02"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+    responseXML["ResMsg02"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+    responseXML["ResMsg02"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+    responseXML["ResMsg02"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+  }
+  return responseXML;
+} 
 
 function mapRequestToResponse(args){
     var responseJson = {};

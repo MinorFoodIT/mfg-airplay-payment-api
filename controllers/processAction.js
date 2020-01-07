@@ -18,7 +18,13 @@ const _resMsg01 = {
         "Ref1": '',
         "Ref2": '',
         "Ref3": '',
-        "Ref4": ''
+        "Ref4": '',
+        "Ref5": '',
+        "Ref6": '',
+        "Ref7": '',
+        "Ref8": '',
+        "Ref9": '',
+        "Ref10": '',
     }
 }
 //ATG message incoming
@@ -48,7 +54,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                     let data = JSON.parse(apResp);
                     if(String(data["ap_trans_result"]) === String(apResCode.transResult.SUCCESSFUL)){
                         resMsg01.ResHdr.ResCd = '0000';
-                        resMsg01.ResHdr.ResMsg = resCode.code["0000"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
+                        resMsg01.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg01.ResDtl.ErrCd = '0000';
 
                         resMsg01.ResDtl.Ref1 = data["ap_trans_id"];
@@ -58,18 +64,18 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg01.ResDtl.Ref6 = data["ap_pay_time"];
                     }else{
                         resMsg01.ResHdr.ResCd = '8006';
-                        resMsg01.ResHdr.ResMsg = resCode.code["8006"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
+                        resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg01.ResDtl.ErrCd = '8006';
-                        resMsg01.ResDtl.ErrMsgThai = resCode.code["8006"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
-                        resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
+                        resMsg01.ResDtl.ErrMsgThai = resCode.code["8006"]["msgThai"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
+                        resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                     }
                     callback(null,resMsg01); 
                 }else{ //error_code
                     resMsg01.ResHdr.ResCd = '8006';
-                    resMsg01.ResHdr.ResMsg = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];
+                    resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode[apResp];
                     resMsg01.ResDtl.ErrCd = '8006';
-                    resMsg01.ResDtl.ErrMsgThai = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];
-                    resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"] +' : '+ apResCode.errorCode[apResp];  
+                    resMsg01.ResDtl.ErrMsgThai = resCode.code["8006"]["msgThai"] +' : '+ apResCode.errorCode[apResp];
+                    resMsg01.ResDtl.ErrMsgEng = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode[apResp];  
                     callback(null,resMsg01); 
                 }
             }
@@ -77,7 +83,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
         })
         .catch(err => {
             resMsg01.ResHdr.ResCd = '8006';
-            resMsg01.ResHdr.ResMsg = resCode.code["8006"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
+            resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
             resMsg01.ResDtl.ErrCd = '8006';
             resMsg01.ResDtl.ErrCd = '8006';
             resMsg01.ResDtl.ErrMsgThai = err.message;
