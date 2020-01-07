@@ -4,30 +4,29 @@ var soap = require('soap');
 var helper = require('./../common/helper');
 var logger = require('./../common/logging/winston')(__filename);
 var parser = require('fast-xml-parser');
-var he = require('he');
-
-var uuidV1 = require('uuid/v1');
+//var he = require('he');
+//var uuidV1 = require('uuid/v1');
 const moment = require('moment');
 var processAction = Promise.promisify(require('./processAction'));
 const dao = require('./../services/dbClient');
 
-//Webservice definetion
+//Load Webservice definetion
 var xml = require('fs').readFileSync(path.join(__dirname,'posservices.wsdl'), 'utf8');
 var service = {
     PosServices: {
       PosServicesSoap: {
-        RequestService01: function (args,cb,headers, req) {
+        RequestService01: function (args,cb,headers, req) {  //soap header
           //console.log(req.connection);//.Socket.parser.HTTPParser.parsingHeadersStart);  
-          var reqTimeMs = new Date().getTime();        
-          saveRequestMessage(args,reqTimeMs);
+          var reqTimeMs = new Date().getTime(); //YYYYMMDDHHMISS       
+          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);
+          saveRequestMessage(args,reqTimeMs);   //entries message save to db
 
-          var responseXML = mapRequestToResponse(args)
-          var actionCode = helper.isNullEmptry(args["RegMsg01"]["ReqHdr"]["ActCd"])?'': args["RegMsg01"]["ReqHdr"]["ActCd"]
+          var responseXML = mapRequestToResponse(args) //initial xml
+          var actionCode  = helper.isNullEmptry(args["RegMsg01"]["ReqHdr"]["ActCd"])?'': args["RegMsg01"]["ReqHdr"]["ActCd"]
 
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
-            logger.info('[RequestService01] callback processAction resp '+JSON.stringify(resp));
-            
+            logger.info('[RequestService01] processAction resp '+JSON.stringify(resp));
             cb(assignResCode('01',responseXML,resp));
           })
           .catch((err) => {
@@ -37,13 +36,14 @@ var service = {
           
         },
         RequestService02: function (args,cb,headers, req) {
-          var reqTimeMs = new Date().getTime();        
+          var reqTimeMs = new Date().getTime(); 
+          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);       
           saveRequestMessage(args,reqTimeMs);
           var responseXML = mapRequestToResponse(args)
           var actionCode = helper.isNullEmptry(args["RegMsg02"]["ReqHdr"]["ActCd"])?'': args["RegMsg02"]["ReqHdr"]["ActCd"]
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
-            logger.info('[RequestService02] callback processAction resp => '+JSON.stringify(resp));
+            logger.info('[RequestService02] processAction resp => '+JSON.stringify(resp));
             return assignResCode('02',responseXML,resp);
           })
           .catch((err) => {
@@ -94,8 +94,8 @@ const soapApp = (app) => {
                 }
             }else if(type === 'replied')
             {
-                logger.info('replied =>');
-                logger.info(data);
+                // logger.info('replied =>');
+                // logger.info(data);
             }else{
                 //type is info
                 //logger.info('Info: '+data);
@@ -105,7 +105,7 @@ const soapApp = (app) => {
 
         //Map soap request    
         soapServer.on('request', function(request, methodName){
-            logger.info('[AtgMessageRequestType] '+ methodName);
+            // logger.info('[AtgMessageRequestType] '+ methodName);
             //logger.info('requestXML => '+ JSON.stringify(request));
            
             
@@ -113,7 +113,7 @@ const soapApp = (app) => {
         //Map response  
         soapServer.on('response', function(response, methodName){
           //console.log(httpContext.get('reqId'));
-            logger.info('responseXML => '+ JSON.stringify(response));
+            // logger.info('responseXML => '+ JSON.stringify(response));
                 //assert.equal(response.result, responseXML);
                 //assert.equal(methodName, 'sayHello');
                 //response.result = response.result.replace('Bob','John');
@@ -139,14 +139,6 @@ function normalizePort(val) {
   }
 
 function assignResCode(massageType,responseXML,resp) {
-  // logger.info('responseXML => ');
-  // console.log(responseXML);
-
-  // logger.info('resp => ');
-  // console.log(resp);
-
-  //var RequestServiceResult = {};
-
   if(massageType === '01'){
     responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
     responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
@@ -161,8 +153,6 @@ function assignResCode(massageType,responseXML,resp) {
     responseXML["RequestService01Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
     responseXML["RequestService01Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
     responseXML["RequestService01Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
-
-    //RequestServiceResult["RequestService01Result"] = responseXML; 
   }else if(massageType === '02'){
     responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
     responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
@@ -177,9 +167,7 @@ function assignResCode(massageType,responseXML,resp) {
     responseXML["RequestService02Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
     responseXML["RequestService02Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
     responseXML["RequestService02Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
-    //RequestServiceResult["RequestService02Result"] = responseXML; 
   }
-  
   return responseXML;
 } 
 
@@ -245,7 +233,6 @@ function mapRequestToResponse(args){
 }
 
 function saveRequestMessage(request,reqTimeMs){
-  //if(request["Body"]["RequestService01"]["RegMsg01"]["ReqHdr"]["ReqID"]){
   if(request["RegMsg01"]["ReqHdr"]["ReqID"]){ 
     let reqId = request["RegMsg01"]["ReqHdr"]["ReqID"]
     dao.saveReqId(reqTimeMs,reqId,'','message01',JSON.stringify(request))

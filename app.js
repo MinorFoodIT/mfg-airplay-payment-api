@@ -1,8 +1,6 @@
 var express = require('express');
 var soapApp = require('./controllers/soapApp');
-var uuidV1 = require('uuid/v1');
 var httpContext = require('express-http-context');
-var pool = require('./common/pg/pooled');
 
 var app = express(); 
 app.use(httpContext.middleware);
