@@ -28,7 +28,7 @@ var service = {
           .then( (resp) => {
             logger.info('[RequestService01] callback processAction resp '+JSON.stringify(resp));
             
-            return assignResCode('01',responseXML,resp);
+            cb(assignResCode('01',responseXML,resp));
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
