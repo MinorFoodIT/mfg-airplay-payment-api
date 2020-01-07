@@ -9,6 +9,7 @@ var parser = require('fast-xml-parser');
 const moment = require('moment');
 var processAction = Promise.promisify(require('./processAction'));
 const dao = require('./../services/dbClient');
+var resCode = require('./../model/resCode');
 
 //Load Webservice definetion
 var xml = require('fs').readFileSync(path.join(__dirname,'posservices.wsdl'), 'utf8');
@@ -27,11 +28,12 @@ var service = {
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService01] processAction resp '+JSON.stringify(resp));
-            cb(assignResCode('01',responseXML,resp));
+            cb(assignResCode('01',responseXML,resp,null));
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
             console.log(err.stack);
+            cb(assignResCode('01',responseXML,null,err));
           })
           
         },
@@ -44,17 +46,17 @@ var service = {
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService02] processAction resp => '+JSON.stringify(resp));
-            return assignResCode('02',responseXML,resp);
+            cb(assignResCode('02',responseXML,resp,null));
           })
           .catch((err) => {
             logger.info('RequestService02] processAction error => '+err);
             console.log(err.stack);
+            cb(assignResCode('02',responseXML,null,err));
           })
         },
         RequestService03: function (args) {
-            return {
-                greeting: args.firstName
-            };
+            var responseXML = mapRequestToResponse(args)
+            return responseXML;
         },
       }
     }
@@ -138,36 +140,53 @@ function normalizePort(val) {
     return false;
   }
 
-function assignResCode(massageType,responseXML,resp) {
-  if(massageType === '01'){
-    responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
-    responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
-    responseXML["RequestService01Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
-    responseXML["RequestService01Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
-    responseXML["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
-    responseXML["RequestService01Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
-    responseXML["RequestService01Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
-  }else if(massageType === '02'){
-    responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
-    responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
-    responseXML["RequestService02Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
-    responseXML["RequestService02Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
-    responseXML["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
-    responseXML["RequestService02Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
-    responseXML["RequestService02Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+function assignResCode(massageType,responseXML,resp,error) {
+  if(!helper.isNullEmptry(resp)){
+    if(massageType === '01'){
+      responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+      responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+      responseXML["RequestService01Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    }else if(massageType === '02'){
+      responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+      responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+      responseXML["RequestService02Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    }
+  }else if(!helper.isNullEmptry(error)){
+    if(massageType === '01'){
+      responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = '8007';
+      responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrCd"] = '8007';
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgEng"]  = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = resCode["code"]["8007"]["msgEng"];
+    }else if(massageType === '02'){
+      responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = '8007';
+      responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrCd"] = '8007';
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgEng"]  = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = resCode["code"]["8007"]["msgEng"];
+    }
   }
+  
   return responseXML;
 } 
 
