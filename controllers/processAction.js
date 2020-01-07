@@ -43,6 +43,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs) => {
         let resMsg01 = Object.assign({},_resMsg01);
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
+            logger.info('callback message => '+apResp);
             if(helper.isString(apResp)){
                 if(helper.IsValidJSONString(apResp)){
                     let data = JSON.parse(apResp);
