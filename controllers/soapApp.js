@@ -32,6 +32,7 @@ var service = {
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
+            console.log(err.stack);
           })
           
         },
@@ -47,6 +48,7 @@ var service = {
           })
           .catch((err) => {
             logger.info('RequestService02] processAction error => '+err);
+            console.log(err.stack);
           })
         },
         RequestService03: function (args) {
@@ -136,6 +138,12 @@ function normalizePort(val) {
   }
 
 function assignResCode(massageType,responseXML,resp) {
+  logger.info('responseXML => ');
+  console.log(responseXML);
+
+  logger.info('resp => ');
+  console.log(resp);
+
   if(massageType === '01'){
     responseXML["ResMsg01"]["ResHdr"]["ResCd"]  = resp["ReqHdr"]["ResCd"];
     responseXML["ResMsg01"]["ResHdr"]["ResMsg"] = resp["ReqHdr"]["ResMsg"];
