@@ -1,49 +1,50 @@
 const crypto = require('crypto');
-const request = require('request')
+//const request = require('request'); //{ json: JSON.stringify(apReqBody)}
+const axios = require('axios');
 const moment = require('moment');
 var logger = require('./../../common/logging/winston')(__filename);
 const dao = require('./../dbClient');
 const config = require('./../../common/config');
+var helper = require('./../../common/helper');
 
-const secret = config.app_secret;
-const partnerId = config.partner_id;
 const serviceAP = {
     "pay" : 'ap.pay',
     "refund": 'ap.refund',
     "query": 'ap.query',
     "notify": 'ap.notify'
 }
+const secret = config.app_secret;
+const partnerId = config.partner_id;
 const signType = 'MD5';
-const payURL = 'https://api.airpay.in.th/pay/barcode/pay';
+const payURL = config.ap_url+'/pay';
+const inqURL = config.ap_url+'/query';
 
 const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     var payData = {
-        trans_amount: 0,
-        currency: 'THB',
-        merchant_name: 'SG_DQ',
+        partner_tran_id: '',
+        buyer_code_type: 'qrcode', //'barcode',
+        buyer_code: '',
         trans_create_time: moment().format('YYYYMMDDHHmmss'),
         trans_name: 'instore',
-        buyer_code_type: 'qrcode', //'barcode',
-        store_name: 'Rama4',
+        trans_amount: 0,
+        currency: 'THB',
         merchant_type: '5995',
-        partner_tran_id: '2010121000000002',
-        buyer_code: 'APTH13112012345678',
-        merchant_id: 'Teminal_1026',
-        memo: 'dine in',
-        store_id: 'DQ1113'
+        merchant_id: '',
+        merchant_name: '',
+        store_id: '',
+        store_name: '',
+        memo: ''
     }
-
-    payData["merchant_name"]        = 'SG_DQ'
-    payData["trans_amount"]         = Number(TrnHdr["TtlAmt"].concat('00'));
-    payData["buyer_code"]           = TrnHdr["Ref1"];
-    payData["trans_name"]           = TrnHdr["Ref2"];
-    payData["store_name"]           = TrnHdr["Ref3"]; //bu code
-    payData["store_id"]             = TrnHdr["StrCd"];
-    payData["merchant_id"]          = TrnHdr["StrCd"];
-    payData["trans_create_time"]    = TrnHdr["TrnDt"];
     payData["partner_tran_id"]      = reqTimeMs+'-'+ReqHdr["TxID"];
+    payData["buyer_code"]           = TrnHdr["Ref1"];
+    payData["trans_create_time"]    = TrnHdr["TrnDt"];
+    payData["trans_name"]           = TrnHdr["Ref2"];
+    payData["trans_amount"]         = Number(TrnHdr["TtlAmt"].concat('00'));
+    payData["merchant_id"]          = TrnHdr["StrCd"];
+    payData["merchant_name"]        = 'SG_DQ'
+    payData["store_id"]             = TrnHdr["StrCd"];
+    payData["store_name"]           = TrnHdr["Ref3"]; //bu code
     payData["memo"]                 = reqTimeMs
-
     return JSON.stringify(payData);
 }
 
@@ -51,52 +52,90 @@ const mapResToATG = () => {
 
 } 
 
-const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
-   
+const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => { 
    let data = mapAtg01ToAP(reqTimeMs,ReqHdr,TrnHdr); 
    //prepare message to sign
    let textToMD5 = partnerId.concat(serviceAP["pay"],data,signType,secret);
-   logger.info('[payService] target to sign => ');
-   logger.info(textToMD5);
-    //sign message
-   let sign = crypto.createHash('md5').update('textToMD5').digest("hex");
-   logger.info('[payService] message signed '+sign);
+   // logger.info('[payService] target to sign => ');
+   // console.log(textToMD5); 
+   
+   //sign message
+   let sign = crypto.createHash('md5').update(textToMD5).digest("hex");
+   //logger.info('[payService] message signed '+sign);
 
    var apReqBody = {
     "partner_id": partnerId,
     "service": serviceAP["pay"],
-    "data": data,//escapeDoubleQuote(data),
+    "data": data,  //escapeDoubleQuote(data),
     "sign_type": "MD5",
     "sign": sign
    }
-   logger.info('[payService] AP request => ');
+   logger.info('[ap.pay] api request => ');
    console.log(JSON.stringify(apReqBody));
 
    //Send request to pay service
-   dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
-   request.post(payURL, {
-    json: JSON.stringify(apReqBody)
-   }, (error, res, body) => {
-    if (error) {
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(error),error,null,'error',1);
-        logger.info('[ap.pay] error '+error)
-        //return
-        callback(error,null);
+   dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',null,null,null,'sending',1);
+   axios.post(payURL, apReqBody, {timeout: 30000})
+   .then(res => {
+    logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
+    if(helper.isObject(res.data)){
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1);
+        logger.info(res.data);
+    }
+    let resMsgBody = res.data; //body
+    if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
+        //have error code
+        callback(null,resMsgBody.error_code);
     }else{
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(body),body,null,'sent',1);
-        logger.info('[Airpay] pay->return '+`statusCode: ${res.statusCode}`)
-        logger.info(body) 
-
-        let resMsgBody = body
-        if(body["error_code"] && body["error_code"].length > 0 ){
-            //have error code
-            callback(null,resMsgBody.error_code);
-        }else{
-            callback(null,resMsgBody.data);
-        }
+        callback(null,resMsgBody.data);
     }
    })
+   .catch(error => {
+    logger.info('[ap.pay] error '+error.message);
+    let error_code    = error.code;
+    let error_message = String(error.message);  //timeout of 2ms exceeded
+    let error_stack    = error.stack;   //Error: timeout of 2ms exceeded
+    if(String(error_code) == String('ECONNABORTED') && error_message.includes('timeout')){
+        //timeout
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'timeout',1);
+        //retry inquiry
+        let textToMD5_retry = partnerId.concat(serviceAP["query"],data,signType,secret);
+        let sign_retry = crypto.createHash('md5').update(textToMD5_retry).digest("hex");
+        apReqBody["service"] = serviceAP["query"];
+        apReqBody["sign"] = sign_retry;
+        logger.info('[ap.query] api request => ');
+        console.log(JSON.stringify(apReqBody));
+        axios.post(inqURL, apReqBody, {timeout: 30000})
+            .then(res => {
+                logger.info('[ap.query] resp => ');  //+`statusCode: ${res.statusCode}`
+                if(helper.isObject(res.data)){
+                    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',JSON.stringify(res.data),res.data,null,'sent_timeout_retry',1);
+                    logger.info(res.data);
+                }
+                let resMsgBody = res.data; //body
+                if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
+                    //have error code
+                    callback(null,resMsgBody.error_code);
+                }else{
+                    callback(null,resMsgBody.data);
+                }
+            })
+            .catch(err => {
+                logger.info('[ap.query] error '+error.message);
+                if(String(err.code) == String('ECONNABORTED') && String(err.message).includes('timeout')){
+                    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error_retry_timeout',1);
+                    callback(err,null);
+                }else{
+                    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error_retry_error',1);
+                    callback(err,null);
+                }
+            })
 
+    }else{
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error',1);
+        callback(error,null);
+    }
+   }) 
 }
 
 module.exports = payService

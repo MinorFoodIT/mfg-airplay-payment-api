@@ -4,55 +4,67 @@ var soap = require('soap');
 var helper = require('./../common/helper');
 var logger = require('./../common/logging/winston')(__filename);
 var parser = require('fast-xml-parser');
-var he = require('he');
-
-var uuidV1 = require('uuid/v1');
+//var he = require('he');
+//var uuidV1 = require('uuid/v1');
 const moment = require('moment');
 var processAction = Promise.promisify(require('./processAction'));
 const dao = require('./../services/dbClient');
+var resCode = require('./../model/resCode');
 
-//Webservice definetion
+//Load Webservice definetion
 var xml = require('fs').readFileSync(path.join(__dirname,'posservices.wsdl'), 'utf8');
 var service = {
     PosServices: {
       PosServicesSoap: {
-        RequestService01: function (args,cb,headers, req) {
+        RequestService01: function (args,cb,headers, req) {  //soap header
           //console.log(req.connection);//.Socket.parser.HTTPParser.parsingHeadersStart);  
-          var reqTimeMs = new Date().getTime();        
-          saveRequestMessage(args,reqTimeMs);
+          var reqTimeMs = new Date().getTime(); //YYYYMMDDHHMISS       
+          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);
+          saveRequestMessage(args,reqTimeMs);   //entries message save to db
 
-          var responseXML = mapRequestToResponse(args)
-          var actionCode = helper.isNullEmptry(args["RegMsg01"]["ReqHdr"]["ActCd"])?'': args["RegMsg01"]["ReqHdr"]["ActCd"]
+          var responseXML = mapRequestToResponse(args) //initial xml
+          var actionCode  = helper.isNullEmptry(args["RegMsg01"]["ReqHdr"]["ActCd"])?'': args["RegMsg01"]["ReqHdr"]["ActCd"]
 
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
-            logger.info('[RequestService01] callback processAction resp '+JSON.stringify(resp));
-            //if(resp[])
-            cb(responseXML);
+            logger.info('[RequestService01] processAction resp '+JSON.stringify(resp));
+            let _responseXML = assignResCode('01',responseXML,resp,null);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg01"]["ReqHdr"]["ReqID"],'','message01',_responseXML);
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
+            console.log(err.stack);
+            let _responseXML = assignResCode('01',responseXML,null,err);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg01"]["ReqHdr"]["ReqID"],'','error_message01',_responseXML);
           })
           
         },
         RequestService02: function (args,cb,headers, req) {
-          var reqTimeMs = new Date().getTime();        
+          var reqTimeMs = new Date().getTime(); 
+          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);       
           saveRequestMessage(args,reqTimeMs);
           var responseXML = mapRequestToResponse(args)
           var actionCode = helper.isNullEmptry(args["RegMsg02"]["ReqHdr"]["ActCd"])?'': args["RegMsg02"]["ReqHdr"]["ActCd"]
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
-            logger.info('[RequestService02] callback processAction resp => '+JSON.stringify(resp));
-            cb(responseXML);
+            logger.info('[RequestService02] processAction resp => '+JSON.stringify(resp));
+            let _responseXML = assignResCode('02',responseXML,resp,null);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg02"]["ReqHdr"]["ReqID"],'','message02',_responseXML);
           })
           .catch((err) => {
             logger.info('RequestService02] processAction error => '+err);
+            console.log(err.stack);
+            let _responseXML = assignResCode('02',responseXML,null,err);
+            cb(_responseXML);
+            dao.saveResId(reqTimeMs,args["RegMsg02"]["ReqHdr"]["ReqID"],'','error_message02',_responseXML);
           })
         },
         RequestService03: function (args) {
-            return {
-                greeting: args.firstName
-            };
+            var responseXML = mapRequestToResponse(args)
+            return responseXML;
         },
       }
     }
@@ -92,7 +104,8 @@ const soapApp = (app) => {
                 }
             }else if(type === 'replied')
             {
-                //logger.info(data);
+                // logger.info('replied =>');
+                // logger.info(data);
             }else{
                 //type is info
                 //logger.info('Info: '+data);
@@ -102,7 +115,7 @@ const soapApp = (app) => {
 
         //Map soap request    
         soapServer.on('request', function(request, methodName){
-            logger.info('[AtgMessageRequestType] '+ methodName);
+            // logger.info('[AtgMessageRequestType] '+ methodName);
             //logger.info('requestXML => '+ JSON.stringify(request));
            
             
@@ -110,7 +123,7 @@ const soapApp = (app) => {
         //Map response  
         soapServer.on('response', function(response, methodName){
           //console.log(httpContext.get('reqId'));
-            //logger.info('responseXML => '+ JSON.stringify(response));
+            // logger.info('responseXML => '+ JSON.stringify(response));
                 //assert.equal(response.result, responseXML);
                 //assert.equal(methodName, 'sayHello');
                 //response.result = response.result.replace('Bob','John');
@@ -135,69 +148,118 @@ function normalizePort(val) {
     return false;
   }
 
+function assignResCode(massageType,responseXML,resp,error) {
+  if(!helper.isNullEmptry(resp)){
+    if(massageType === '01'){
+      responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+      responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+      responseXML["RequestService01Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+      responseXML["RequestService01Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    }else if(massageType === '02'){
+      responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = resp["ResHdr"]["ResCd"];
+      responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resp["ResHdr"]["ResMsg"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrCd"] = resp["ResDtl"]["ErrCd"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgEng"]  = resp["ResDtl"]["ErrMsgEng"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = resp["ResDtl"]["ErrMsgThai"];
+      responseXML["RequestService02Result"]["ResDtl"]["Ref1"] = resp["ResDtl"]["Ref1"].length > 0?resp["ResDtl"]["Ref1"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref3"] = resp["ResDtl"]["Ref3"].length > 0?resp["ResDtl"]["Ref3"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref4"] = resp["ResDtl"]["Ref4"].length > 0?resp["ResDtl"]["Ref4"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref5"] = resp["ResDtl"]["Ref5"].length > 0?resp["ResDtl"]["Ref5"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref6"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref6"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref8"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref8"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref9"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref9"]:'';
+      responseXML["RequestService02Result"]["ResDtl"]["Ref10"] = resp["ResDtl"]["Ref6"].length > 0?resp["ResDtl"]["Ref10"]:'';
+    }
+  }else if(!helper.isNullEmptry(error)){
+    if(massageType === '01'){
+      responseXML["RequestService01Result"]["ResHdr"]["ResCd"]  = '8007';
+      responseXML["RequestService01Result"]["ResHdr"]["ResMsg"] = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrCd"] = '8007';
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgEng"]  = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = resCode["code"]["8007"]["msgEng"];
+    }else if(massageType === '02'){
+      responseXML["RequestService02Result"]["ResHdr"]["ResCd"]  = '8007';
+      responseXML["RequestService02Result"]["ResHdr"]["ResMsg"] = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrCd"] = '8007';
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgEng"]  = resCode["code"]["8007"]["msgEng"];
+      responseXML["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = resCode["code"]["8007"]["msgEng"];
+    }
+  }
+  
+  return responseXML;
+} 
+
 function mapRequestToResponse(args){
     var responseJson = {};
     if(args["RegMsg01"]){
-      responseJson["ResMsg01"] = {}
-      responseJson["ResMsg01"]["ResHdr"] = {}
-      responseJson["ResMsg01"]["ResDtl"] = {}
+      responseJson["RequestService01Result"] = {}
+      responseJson["RequestService01Result"]["ResHdr"] = {}
+      responseJson["RequestService01Result"]["ResDtl"] = {}
 
-      responseJson["ResMsg01"]["ResHdr"]["ActCd"]  =  args["RegMsg01"]["ReqHdr"]["ActCd"];
-      responseJson["ResMsg01"]["ResHdr"]["ResID"]  =  args["RegMsg01"]["ReqHdr"]["ReqID"];
-      responseJson["ResMsg01"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
-      responseJson["ResMsg01"]["ResHdr"]["ResCd"]  = '';
-      responseJson["ResMsg01"]["ResHdr"]["ResMsg"] = '';
+      responseJson["RequestService01Result"]["ResHdr"]["ActCd"]  =  args["RegMsg01"]["ReqHdr"]["ActCd"];
+      responseJson["RequestService01Result"]["ResHdr"]["ResID"]  =  args["RegMsg01"]["ReqHdr"]["ReqID"];
+      responseJson["RequestService01Result"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
+      responseJson["RequestService01Result"]["ResHdr"]["ResCd"]  = '';
+      responseJson["RequestService01Result"]["ResHdr"]["ResMsg"] = '';
       
-      responseJson["ResMsg01"]["ResDtl"]["ErrCd"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ErrMsgEng"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ErrMsgThai"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ApvlCd"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref1"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref3"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref4"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref5"] = args["RegMsg01"]["TrnHdr"]["TtlAmt"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref6"] = args["RegMsg01"]["TrnHdr"]["TrnDt"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref7"] = args["RegMsg01"]["TrnHdr"]["ChkNo"];
-      responseJson["ResMsg01"]["ResDtl"]["Ref8"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref9"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["Ref10"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ErrCd"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ErrMsgEng"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["ApvlCd"] = args["RegMsg01"]["ReqHdr"]["ActCd"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref1"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref3"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref4"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref5"] = args["RegMsg01"]["TrnHdr"]["TtlAmt"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref6"] = args["RegMsg01"]["TrnHdr"]["TrnDt"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref7"] = args["RegMsg01"]["TrnHdr"]["ChkNo"];
+      responseJson["RequestService01Result"]["ResDtl"]["Ref8"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref9"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref10"] = '';
 
-      responseJson["ResMsg01"]["MinorID"] = uuidV1();
+      responseJson["RequestService01Result"]["MinorID"] = 0; //uuidV1();
       
     }else if(args["RegMsg02"]){
-      responseJson["RegMsg02"] = {}
-      responseJson["RegMsg02"]["ResHdr"] = {}
-      responseJson["RegMsg02"]["ResDtl"] = {}
+      responseJson["RequestService02Result"] = {}
+      responseJson["RequestService02Result"]["ResHdr"] = {}
+      responseJson["RequestService02Result"]["ResDtl"] = {}
 
-      responseJson["RegMsg02"]["ResHdr"]["ActCd"]  =  args["RegMsg02"]["ReqHdr"]["ActCd"];
-      responseJson["RegMsg02"]["ResHdr"]["ResID"]  =  args["RegMsg02"]["ReqHdr"]["ReqID"];
-      responseJson["RegMsg02"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
-      responseJson["RegMsg02"]["ResHdr"]["ResCd"]  = '';
-      responseJson["RegMsg02"]["ResHdr"]["ResMsg"] = '';
+      responseJson["RequestService02Result"]["ResHdr"]["ActCd"]  =  args["RegMsg02"]["ReqHdr"]["ActCd"];
+      responseJson["RequestService02Result"]["ResHdr"]["ResID"]  =  args["RegMsg02"]["ReqHdr"]["ReqID"];
+      responseJson["RequestService02Result"]["ResHdr"]["ResDt"]  =  moment().format('YYYYMMDDHHmmss');
+      responseJson["RequestService02Result"]["ResHdr"]["ResCd"]  = '';
+      responseJson["RequestService02Result"]["ResHdr"]["ResMsg"] = '';
       
-      responseJson["RegMsg02"]["ResDtl"]["ErrCd"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["ErrMsgEng"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["ErrMsgThai"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["ApvlCd"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref1"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref3"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref4"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref5"] = args["RegMsg02"]["TrnHdr"]["TtlAmt"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref6"] = args["RegMsg02"]["TrnHdr"]["TrnDt"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref7"] = args["RegMsg02"]["TrnHdr"]["ChkNo"];
-      responseJson["RegMsg02"]["ResDtl"]["Ref8"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref9"] = '';
-      responseJson["RegMsg02"]["ResDtl"]["Ref10"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ErrCd"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ErrMsgEng"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["ApvlCd"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref1"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref3"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref4"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref5"] = args["RegMsg02"]["TrnHdr"]["TtlAmt"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref6"] = args["RegMsg02"]["TrnHdr"]["TrnDt"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref7"] = args["RegMsg02"]["TrnHdr"]["ChkNo"];
+      responseJson["RequestService02Result"]["ResDtl"]["Ref8"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref9"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref10"] = '';
 
-      responseJson["RegMsg02"]["MinorID"] = uuidV1();
+      responseJson["RequestService02Result"]["MinorID"] = 0; //uuidV1();
     }
     return responseJson;
 }
 
 function saveRequestMessage(request,reqTimeMs){
-  //if(request["Body"]["RequestService01"]["RegMsg01"]["ReqHdr"]["ReqID"]){
   if(request["RegMsg01"]["ReqHdr"]["ReqID"]){ 
     let reqId = request["RegMsg01"]["ReqHdr"]["ReqID"]
     dao.saveReqId(reqTimeMs,reqId,'','message01',JSON.stringify(request))
