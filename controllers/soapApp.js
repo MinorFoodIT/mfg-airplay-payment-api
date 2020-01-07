@@ -199,7 +199,7 @@ function mapRequestToResponse(args){
       responseJson["ResMsg01"]["ResDtl"]["ErrCd"] = '';
       responseJson["ResMsg01"]["ResDtl"]["ErrMsgEng"] = '';
       responseJson["ResMsg01"]["ResDtl"]["ErrMsgThai"] = '';
-      responseJson["ResMsg01"]["ResDtl"]["ApvlCd"] = '';
+      responseJson["ResMsg01"]["ResDtl"]["ApvlCd"] = args["RegMsg01"]["ReqHdr"]["ActCd"];
       responseJson["ResMsg01"]["ResDtl"]["Ref1"] = '';
       responseJson["ResMsg01"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
       responseJson["ResMsg01"]["ResDtl"]["Ref3"] = '';
@@ -211,7 +211,7 @@ function mapRequestToResponse(args){
       responseJson["ResMsg01"]["ResDtl"]["Ref9"] = '';
       responseJson["ResMsg01"]["ResDtl"]["Ref10"] = '';
 
-      responseJson["ResMsg01"]["MinorID"] = uuidV1();
+      responseJson["ResMsg01"]["MinorID"] = 0; //uuidV1();
       
     }else if(args["RegMsg02"]){
       responseJson["RegMsg02"] = {}
