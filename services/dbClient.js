@@ -26,7 +26,7 @@ const saveRawRequest = (req,jsonReq) => {
 
 }
 
-const getSite = (bu_code) => {
+const getSite = async (bu_code) => {
     try{
         const res = await pool.query('SELECT site_group_name from sites where bu_code = $1 ',[bu_code])
         return res.rows[0].site_group_name;
