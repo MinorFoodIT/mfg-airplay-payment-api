@@ -33,6 +33,7 @@ const getSite = async (bu_code) => {
     }
     catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
+        return '';
     }
 }
 
