@@ -10,6 +10,15 @@ const moment = require('moment');
 var processAction = Promise.promisify(require('./processAction'));
 const dao = require('./../services/dbClient');
 var resCode = require('./../model/resCode');
+const myCache = require('./../common/nodeCache');
+
+dao.getSite()
+.then(rows => {
+  myCache.set("sites",rows);
+})
+.catch(err => {
+  logger.info('error load cache : sites data'); 
+})
 
 //Load Webservice definetion
 var xml = require('fs').readFileSync(path.join(__dirname,'posservices.wsdl'), 'utf8');

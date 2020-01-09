@@ -26,14 +26,15 @@ const saveRawRequest = (req,jsonReq) => {
 
 }
 
-const getSite = async (bu_code) => {
+const getSite = async () => {
     try{
-        const res = await pool.query('SELECT site_group_name from sites where bu_code = $1 ',[bu_code])
-        return res.rows[0].site_group_name;
+        const res = await pool.query('SELECT site_group_name,bu_code from sites ')
+        //return res.rows[0].site_group_name;
+        return res.rows;
     }
     catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
-        return '';
+        return [];
     }
 }
 
