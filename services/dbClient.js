@@ -31,13 +31,15 @@ const getSite = (bu_code) => {
     .then(client => {
         return client.query('SELECT site_group_name from sites where bu_code = $1 ', [bu_code])
         .then(res => {
-             client.release();
              return res.row[0].site_group_name;
         })
         .catch(e => {
              client.release();
              logger.info('[getSite] error => '+ e.stack);
         })
+        .finally( () =>{
+            client.release();
+        });
     })
     .catch(err => {
         logger.info('[Pool connect] error => '+ err.stack);
