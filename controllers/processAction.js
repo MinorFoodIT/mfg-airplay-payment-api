@@ -50,11 +50,12 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
         //invoke airpay api
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
-            //logger.info('callback message => '+apResp);
+            logger.info('callback message => '+apResp);
             if(helper.isString(apResp)){
                 if(helper.IsValidJSONString(apResp)){
                     let data = JSON.parse(apResp);
                     if(String(data["ap_trans_result"]) === String(apResCode.transResult.SUCCESSFUL)){
+                        logger.info('SUCCESSFUL');
                         resMsg01.ResHdr.ResCd = '0000';
                         resMsg01.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg01.ResDtl.ErrCd = '0000';

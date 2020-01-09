@@ -42,9 +42,10 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["trans_name"]           = TrnHdr["Ref2"].substring(11);
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
     payData["merchant_id"]          = TrnHdr["StrCd"];
-    let merchant_name = myCache.get("sites").filter(row =>{
+    let merchant_name = myCache.get("sites").filter(row => {
         return String(row.bu_code) === String(TrnHdr["StrCd"])
     })
+    console.log(merchant_name);
     payData["merchant_name"]        = merchant_name.length > 0 ?merchant_name[0].site_group_name : 'MinorFood' ; 
     console.log(payData["merchant_name"] );
     payData["store_id"]             = TrnHdr["StrCd"];
@@ -152,13 +153,16 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         logger.info('ap.pay return data =>');
         logger.info(resMsgBody.data);
         if(helper.IsValidJSONString(resMsgBody.data)){
+            logger.info('Valid JSON');
             let respData = JSON.parse(resMsgBody.data);
+            console.log(respData);
             if(String(respData["ap_trans_result"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_result"]) === String('WAIT_BUYER_PAY')){
                 setTimeout(function(){
                     let apReqBody = takeMsgSign(data,'query');
                     sendInquiry(callback,apReqBody,1);
                 },30000);
             }else{
+                logger.info('Will callback =>');
                 callback(null,resMsgBody.data);
             }
         }
