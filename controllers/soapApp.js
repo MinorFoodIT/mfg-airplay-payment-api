@@ -15,7 +15,7 @@ const myCache = require('./../common/nodeCache');
 dao.getSite()
 .then(rows => {
   myCache.set("sites",rows);
-  console.log(myCache.get("sites"));
+  //console.log(myCache.get("sites"));
 })
 .catch(err => {
   logger.info('error load cache : sites data'); 

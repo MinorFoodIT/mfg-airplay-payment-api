@@ -6,6 +6,7 @@ var logger = require('./../../common/logging/winston')(__filename);
 const dao = require('./../dbClient');
 const config = require('./../../common/config');
 var helper = require('./../../common/helper');
+const myCache = require('./../../common/nodeCache');
 
 const serviceAP = {
     "pay" : 'ap.pay',
@@ -41,13 +42,10 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["trans_name"]           = TrnHdr["Ref2"].substring(11);
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
     payData["merchant_id"]          = TrnHdr["StrCd"];
-    payData["merchant_name"]        = 'THDQ'; 
-    // await dao.getSite(TrnHdr["StrCd"])
-    // .then(site =>{
-    //     payData["merchant_name"] = site; 
-    // })
-
-    //'SG_DQ'
+    let merchant_name = myCache.get("sites").filter(row =>{
+        return String(row.bu_code) === String(TrnHdr["StrCd"])
+    })
+    payData["merchant_name"]        = merchant_name.length > 0 ?merchant_name[0].site_group_name : 'MinorFood' ; 
     console.log(payData["merchant_name"] );
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
