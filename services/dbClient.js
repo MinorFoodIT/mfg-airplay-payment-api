@@ -27,26 +27,13 @@ const saveRawRequest = (req,jsonReq) => {
 }
 
 const getSite = (bu_code) => {
-    pool.connect()
-    .then(client => {
-        return Promise.resolve(
-        client.query('SELECT site_group_name from sites where bu_code = $1 ', [bu_code])
-        .then(res => {
-             //logger.info('getSite =>');
-             //console.log(res);
-             return res.rows[0].site_group_name;
-        })
-        .catch(e => {
-             logger.info('[getSite] error => '+ e.stack);
-        })
-        .finally( () =>{
-            client.release();
-        })
-        );  
-    })
-    .catch(err => {
+    try{
+        const res = await pool.query('SELECT site_group_name from sites where bu_code = $1 ',[bu_code])
+        return res.rows[0].site_group_name;
+    }
+    catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
-    })
+    }
 }
 
 /**
