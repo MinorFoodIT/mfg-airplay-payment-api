@@ -21,7 +21,7 @@ const inqURL = config.ap_url+'/query';
 
 const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     var payData = {
-        partner_tran_id: '',
+        partner_trans_id: '',
         buyer_code_type: 'qrcode', //'barcode',
         buyer_code: '',
         trans_create_time: moment().format('YYYYMMDDHHmmss'),
@@ -35,7 +35,7 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
         store_name: '',
         memo: ''
     }
-    payData["partner_tran_id"]      = reqTimeMs+'-'+ReqHdr["TxID"];
+    payData["partner_trans_id"]      = reqTimeMs+'-'+ReqHdr["TxID"];
     payData["buyer_code"]           = TrnHdr["Ref1"];
     payData["trans_create_time"]    = TrnHdr["TrnDt"];
     payData["trans_name"]           = TrnHdr["Ref2"];
