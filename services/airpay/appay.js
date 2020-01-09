@@ -59,6 +59,63 @@ const mapResToATG = () => {
 
 } 
 
+var apPostBody = {
+    "partner_id": partnerId,
+    "service": serviceAP["query"],
+    "data": '',  
+    "sign_type": "MD5",
+    "sign": ''
+   }
+
+const takeMsgSign = (data,apiFunction) => {
+    let textToMD5_retry = partnerId.concat(serviceAP["query"],data,signType,secret);
+    let sign_retry = crypto.createHash('md5').update(textToMD5_retry).digest("hex");
+    let apReqBody = {...apPostBody};
+    apReqBody["service"] = serviceAP[apiFunction];
+    apReqBody["data"] = data;
+    apReqBody["sign"] = sign_retry;
+    return apReqBody;
+}
+
+const sendInquiry = (callback,apReqBody,retryNo) => {
+    if(retryNo < 2){
+        logger.info('[ap.query] api request | retry['+retryNo+'] => ');
+        axios.post(inqURL, apReqBody, {timeout: 25000})
+        .then(res => {
+            logger.info('[ap.query] resp => ');  
+            let resMsgBody = res.data; //body
+            if(helper.IsValidJSONString(resMsgBody)){
+                let respData = JSON.parse(resMsgBody);
+                if(String(respData["ap_trans_result"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_result"]) === String('WAIT_BUYER_PAY')){
+                    setTimeout(function(){
+                        let apReqBody = takeMsgSign(data,'query');
+                        sendInquiry(callback,apReqBody,++retryNo);
+                    },5000);
+                }else{
+                    //other status of waiting 
+                    callback(null,resMsgBody.data);
+                }
+            }
+            if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
+                //have error code
+                callback(null,resMsgBody.error_code);
+            }else{
+                callback(null,resMsgBody.data);
+            }
+        })
+        .catch(err => {
+            logger.info('[ap.query] error '+error.message);
+            if(String(err.code) == String('ECONNABORTED') && String(err.message).includes('timeout')){
+                callback(err,null);
+            }else{
+                callback(err,null);
+            }
+        })
+    }else{
+        callback(null,'INVALID_BARCODE');
+    }
+}
+
 const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => { 
    let data = mapAtg01ToAP(reqTimeMs,ReqHdr,TrnHdr); 
    //prepare message to sign
@@ -82,7 +139,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
 
    //Send request to pay service
    dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',null,null,null,'sending',1);
-   axios.post(payURL, apReqBody, {timeout: 30000})
+   axios.post(payURL, apReqBody, {timeout: 25000})
    .then(res => {
     logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
     if(helper.isObject(res.data)){
@@ -96,7 +153,18 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     }else{
         logger.info('ap.pay return data =>');
         logger.info(resMsgBody.data);
-        callback(null,resMsgBody.data);
+        if(helper.IsValidJSONString(resMsgBody.data)){
+            let respData = JSON.parse(resMsgBody.data);
+            if(String(respData["ap_trans_result"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_result"]) === String('WAIT_BUYER_PAY')){
+                setTimeout(function(){
+                    let apReqBody = takeMsgSign(data,'query');
+                    sendInquiry(callback,apReqBody,1);
+                },30000);
+            }else{
+                callback(null,resMsgBody.data);
+            }
+        }
+        //callback(null,resMsgBody.data);
     }
    })
    .catch(error => {
@@ -112,34 +180,37 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         let sign_retry = crypto.createHash('md5').update(textToMD5_retry).digest("hex");
         apReqBody["service"] = serviceAP["query"];
         apReqBody["sign"] = sign_retry;
-        logger.info('[ap.query] api request => ');
-        console.log(JSON.stringify(apReqBody));
-        axios.post(inqURL, apReqBody, {timeout: 30000})
-            .then(res => {
-                logger.info('[ap.query] resp => ');  //+`statusCode: ${res.statusCode}`
-                if(helper.isObject(res.data)){
-                    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',JSON.stringify(res.data),res.data,null,'sent_timeout_retry',1);
-                    logger.info(res.data);
-                }
-                let resMsgBody = res.data; //body
-                if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
-                    //have error code
-                    callback(null,resMsgBody.error_code);
-                }else{
-                    callback(null,resMsgBody.data);
-                }
-            })
-            .catch(err => {
-                logger.info('[ap.query] error '+error.message);
-                if(String(err.code) == String('ECONNABORTED') && String(err.message).includes('timeout')){
-                    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error_retry_timeout',1);
-                    callback(err,null);
-                }else{
-                    dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error_retry_error',1);
-                    callback(err,null);
-                }
-            })
 
+        sendInquiry(callback,apReqBody,1);
+        /*
+        // logger.info('[ap.query] api request => ');
+        // console.log(JSON.stringify(apReqBody));
+        // axios.post(inqURL, apReqBody, {timeout: 25000})
+        //     .then(res => {
+        //         logger.info('[ap.query] resp => ');  //+`statusCode: ${res.statusCode}`
+        //         if(helper.isObject(res.data)){
+        //             dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',JSON.stringify(res.data),res.data,null,'sent_timeout_retry',1);
+        //             logger.info(res.data);
+        //         }
+        //         let resMsgBody = res.data; //body
+        //         if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
+        //             //have error code
+        //             callback(null,resMsgBody.error_code);
+        //         }else{
+        //             callback(null,resMsgBody.data);
+        //         }
+        //     })
+        //     .catch(err => {
+        //         logger.info('[ap.query] error '+error.message);
+        //         if(String(err.code) == String('ECONNABORTED') && String(err.message).includes('timeout')){
+        //             dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error_retry_timeout',1);
+        //             callback(err,null);
+        //         }else{
+        //             dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay|query',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error_retry_error',1);
+        //             callback(err,null);
+        //         }
+        //     })
+        */
     }else{
         dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error',1);
         callback(error,null);
