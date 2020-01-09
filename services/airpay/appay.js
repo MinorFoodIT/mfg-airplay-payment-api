@@ -35,16 +35,16 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
         store_name: '',
         memo: ''
     }
-    payData["partner_trans_id"]      = reqTimeMs+'-'+ReqHdr["TxID"];
+    payData["partner_trans_id"]     = TrnHdr["StrCd"]+'-'+reqTimeMs+'-'+ReqHdr["TxID"];
     payData["buyer_code"]           = TrnHdr["Ref1"];
     payData["trans_create_time"]    = TrnHdr["TrnDt"];
-    payData["trans_name"]           = TrnHdr["Ref2"];
-    payData["trans_amount"]         = Number(TrnHdr["TtlAmt"].concat('00'));
-    payData["merchant_id"]          = TrnHdr["StrCd"];
-    payData["merchant_name"]        = 'SG_DQ'
+    payData["trans_name"]           = TrnHdr["Ref2"].substring(11);
+    payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
+    payData["merchant_id"]          = TrnHdr["StrCd"]
+    payData["merchant_name"]        = Promise.resolve(dao.getSite(TrnHdr["StrCd"]));  //'SG_DQ'
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
-    payData["memo"]                 = String(reqTimeMs)
+    payData["memo"]                 = TrnHdr["Ref3"]+'|'+'Ref: '+TrnHdr["StrCd"]+'-'+reqTimeMs+'-'+ReqHdr["TxID"]
     return JSON.stringify(payData);
 }
 
@@ -87,6 +87,8 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         //have error code
         callback(null,resMsgBody.error_code);
     }else{
+        logger.info('ap.pay return data =>');
+        logger.info(resMsgBody.data);
         callback(null,resMsgBody.data);
     }
    })
