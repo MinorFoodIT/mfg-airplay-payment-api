@@ -31,9 +31,9 @@ const getSite = (bu_code) => {
     .then(client => {
         client.query('SELECT site_group_name from sites where bu_code = $1 ', [bu_code])
         .then(res => {
-             logger.info('getSite =>');
-             console.log(res);
-             return res.row[0].site_group_name;
+             //logger.info('getSite =>');
+             //console.log(res);
+             return res.rows[0].site_group_name;
         })
         .catch(e => {
              logger.info('[getSite] error => '+ e.stack);
