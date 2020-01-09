@@ -9,7 +9,6 @@ var debug = require('debug')('http:api');
 var http = require('http');
 var logger = require('./../common/logging/winston')(__filename);
 
-
 /**
  * Get port from environment and store in Express.
  */
