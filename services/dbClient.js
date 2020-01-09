@@ -29,12 +29,11 @@ const saveRawRequest = (req,jsonReq) => {
 const getSite = (bu_code) => {
     pool.connect()
     .then(client => {
-        return client.query('SELECT site_group_name from sites where bu_code = $1 ', [bu_code])
+        client.query('SELECT site_group_name from sites where bu_code = $1 ', [bu_code])
         .then(res => {
              return res.row[0].site_group_name;
         })
         .catch(e => {
-             client.release();
              logger.info('[getSite] error => '+ e.stack);
         })
         .finally( () =>{
