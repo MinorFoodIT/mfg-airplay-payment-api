@@ -42,6 +42,7 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
     payData["merchant_id"]          = TrnHdr["StrCd"]
     payData["merchant_name"]        = Promise.resolve(dao.getSite(TrnHdr["StrCd"]));  //'SG_DQ'
+    console.log(payData["merchant_name"] );
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
     payData["memo"]                 = TrnHdr["Ref3"]+'|'+'Ref: '+TrnHdr["StrCd"]+'-'+reqTimeMs+'-'+ReqHdr["TxID"]
