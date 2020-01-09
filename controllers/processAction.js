@@ -117,8 +117,10 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
             if(helper.isString(apResp)){
+                logger.info('Data valid JSON : '+helper.IsValidJSONString(apResp));
                 if(helper.IsValidJSONString(apResp)){
                     let data = JSON.parse(apResp);
+                    console.log(data);
                     if(String(data["ap_trans_result"]) === String(apResCode.transResult.SUCCESSFUL)){
                         resMsg02.ResHdr.ResCd = '0000';
                         resMsg02.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
