@@ -4,6 +4,7 @@ Promise = require('bluebird');
 var payService = Promise.promisify(require('./../services/airpay/appay'));
 var apResCode = require('./../model/apResCode');
 var resCode = require('./../model/resCode');
+const moment = require('moment');
 
 const _resMsg01_02 = {
     "ResHdr": {

@@ -159,7 +159,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
             logger.info('Valid JSON');
             let respData = JSON.parse(resMsgBody.data);
             console.log(respData);
-            if( String(respData["ap_trans_status"]) === String('SUCCESSFUL') || String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
+            if( String(respData["ap_trans_status"]) === String('PAYMENT_DONE') || String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
                 setTimeout(function(){
                     let apReqBody = takeMsgSign(data,'query');
                     sendInquiry(callback,apReqBody,1);
