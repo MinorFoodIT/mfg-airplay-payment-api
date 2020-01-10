@@ -63,8 +63,8 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg01.ResDtl.Ref1 = data["ap_trans_id"];
                         resMsg01.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg01.ResDtl.Ref4 = data["ap_buyer_ref"];
-                        resMsg01.ResDtl.Ref5 = data["trans_amount"];
-                        resMsg01.ResDtl.Ref6 = data["ap_pay_time"];
+                        //resMsg01.ResDtl.Ref5 = data["trans_amount"];
+                        resMsg01.ResDtl.Ref6 = moment(data["ap_pay_time"],"YYYYMMDDHHmmss").format('MM/DD/YYYY HH:mm:ss');
                     }else{
                         resMsg01.ResHdr.ResCd = '8006';
                         resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
