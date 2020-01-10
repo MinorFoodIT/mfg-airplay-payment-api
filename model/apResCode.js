@@ -33,7 +33,8 @@ const errorCode = {
     INVALID_REFUND: 'Invalid refund',
     INVALID_AMOUNT: 'Invalid payment amount or refund amount or invalid currency',
     INVALID_PARAMS: 'Invalid format of request parameters',
-    PLEASE_RETRY: 'Unknown API response'
+    PLEASE_RETRY: 'Unknown API response',
+    NOT_ENOUGH_BALANCE: 'Not enough balance'
 }
 
 module.exports = {errorCode,transStatus,transResult}

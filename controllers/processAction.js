@@ -86,6 +86,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
            
         })
         .catch(err => {
+            logger.info('error catch on response message');
             resMsg01.ResHdr.ResCd = '8006';
             resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
             resMsg01.ResDtl.ErrCd = '8006';
