@@ -29,7 +29,7 @@ var service = {
         RequestService01: function (args,cb,headers, req) {  //soap header
           //console.log(req.connection);//.Socket.parser.HTTPParser.parsingHeadersStart);  
           var reqTimeMs = new Date().getTime(); //YYYYMMDDHHMISS       
-          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);
+          logger.info('[RequestService01] incoming => '+reqTimeMs);
           var responseXML = mapRequestToResponse(args) //initial xml
 
           let tran_request_id = args["RegMsg01"]["TrnHdr"]["StrCd"]+'-'+reqTimeMs+'-'+args["RegMsg01"]["ReqHdr"]["TxID"];

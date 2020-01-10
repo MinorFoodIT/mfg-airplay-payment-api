@@ -42,14 +42,14 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["trans_name"]           = String(Number(TrnHdr["Ref2"].substring(11))); //0XXXXX
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
     payData["merchant_id"]          = TrnHdr["StrCd"];
-    console.log(myCache.get("sites").length);
+    //console.log(myCache.get("sites").length);
     let merchant_name = myCache.get("sites").filter(row => {
         return String(row.bu_code).trim() === String(TrnHdr["StrCd"]).trim();
     });
-    console.log(merchant_name.length);
-    console.log(merchant_name);
+    // console.log(merchant_name.length);
+    // console.log(merchant_name);
     payData["merchant_name"]        = merchant_name.length > 0 ?merchant_name[0].site_group_name.trim() : 'MinorFood' ; 
-    console.log(payData["merchant_name"] );
+    //console.log(payData["merchant_name"] );
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
     payData["memo"]                 = TrnHdr["Ref3"]+'|'+'Ref: '+TrnHdr["StrCd"]+'-'+reqTimeMs+'-'+ReqHdr["TxID"]
@@ -83,9 +83,10 @@ const sendInquiry = (callback,apReqBody,retryNo) => {
         logger.info('[ap.query] api request | retry['+retryNo+'] => ');
         axios.post(inqURL, apReqBody, {timeout: 25000})
         .then(res => {
-            logger.info('[ap.query] resp => ');  
+            logger.info('[ap.query] api resp => ');  
             let resMsgBody = res.data; //body
             if(helper.IsValidJSONString(resMsgBody)){
+                console.log(resMsgBody);
                 let respData = JSON.parse(resMsgBody);
                 if(String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
                     setTimeout(function(){
@@ -135,37 +136,44 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     "sign_type": "MD5",
     "sign": sign
    }
-   logger.info('[ap.pay] api request => ');
-   console.log(JSON.stringify(apReqBody));
+   logger.info('[ap.pay] api request => start');
+   //console.log(JSON.stringify(apReqBody));
 
    let jsonReq = JSON.parse(data);
    //Send request to pay service
    dao.savePaymentRequest(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
    axios.post(payURL, apReqBody, {timeout: 25000})
    .then(res => {
-    logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
+    logger.info('[ap.pay] api resp => ');  //+`statusCode: ${res.statusCode}`
     if(helper.isObject(res.data)){
-        dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1,res.data["ap_trans_id"]);
-        logger.info(res.data);
+        let respData = res.data;
+        try{
+            let apRespData = JSON.parse(respData.data)
+            dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1,apRespData["ap_trans_id"]);
+        }catch(err){
+            dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1,null);
+        }
+       console.log(res.data.data);
     }
+
     let resMsgBody = res.data; //body
     if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
         //have error code
         callback(null,resMsgBody.error_code);
     }else{
-        logger.info('ap.pay return data =>');
-        logger.info(resMsgBody.data);
+        //logger.info('ap.pay return data =>');
+        //logger.info(resMsgBody.data);
         if(helper.IsValidJSONString(resMsgBody.data)){
-            logger.info('Valid JSON');
+            //logger.info('Valid JSON');
             let respData = JSON.parse(resMsgBody.data);
-            console.log(respData);
+            //console.log(respData);
             if( String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
                 setTimeout(function(){
                     let apReqBody = takeMsgSign(data,'query');
                     sendInquiry(callback,apReqBody,1);
                 },30000);
             }else{
-                logger.info('Will callback =>');
+                //logger.info('Will callback =>');
                 callback(null,resMsgBody.data);
             }
         }
@@ -217,7 +225,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         //     })
         */
     }else{
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error',1);
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'error',1,null);
         callback(error,null);
     }
    }) 
