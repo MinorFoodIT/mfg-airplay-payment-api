@@ -131,7 +131,7 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg02.ResDtl.Ref1 = data["ap_trans_id"];
                         resMsg02.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg02.ResDtl.Ref4 = data["ap_buyer_ref"];
-                        resMsg02.ResDtl.Ref5 = data["trans_amount"];
+                        //resMsg02.ResDtl.Ref5 = data["trans_amount"];
                         resMsg02.ResDtl.Ref6 = data["ap_pay_time"];
                     }else{
                         resMsg02.ResHdr.ResCd = '8006';
