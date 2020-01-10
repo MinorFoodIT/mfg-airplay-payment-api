@@ -138,13 +138,14 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
    logger.info('[ap.pay] api request => ');
    console.log(JSON.stringify(apReqBody));
 
+   let jsonReq = JSON.parse(data);
    //Send request to pay service
-   dao.savePaymentRequest(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',null,null,null,'sending',1);
+   dao.savePaymentRequest(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',null,null,null,'sending',1);
    axios.post(payURL, apReqBody, {timeout: 25000})
    .then(res => {
     logger.info('[ap.pay] resp => ');  //+`statusCode: ${res.statusCode}`
     if(helper.isObject(res.data)){
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1);
+        dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1,res.data["ap_trans_id"]);
         logger.info(res.data);
     }
     let resMsgBody = res.data; //body
@@ -178,11 +179,11 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     let error_stack    = error.stack;   //Error: timeout of 2ms exceeded
     if(String(error_code) == String('ECONNABORTED') && error_message.includes('timeout')){
         //timeout
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'timeout',1);
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'timeout',1,res.data["ap_trans_id"]);
         //retry inquiry
         let textToMD5_retry = partnerId.concat(serviceAP["query"],data,signType,secret);
         let sign_retry = crypto.createHash('md5').update(textToMD5_retry).digest("hex");
-        apReqBody["service"] = serviceAP["query"];
+        apReqBody["service"] = serviceAP["query"];s
         apReqBody["sign"] = sign_retry;
 
         sendInquiry(callback,apReqBody,1);

@@ -30,9 +30,11 @@ var service = {
           //console.log(req.connection);//.Socket.parser.HTTPParser.parsingHeadersStart);  
           var reqTimeMs = new Date().getTime(); //YYYYMMDDHHMISS       
           logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);
-          saveRequestMessage(args,reqTimeMs);   //entries message save to db
-
           var responseXML = mapRequestToResponse(args) //initial xml
+
+          let tran_request_id = args["RegMsg01"]["TrnHdr"]["StrCd"]+'-'+reqTimeMs+'-'+args["RegMsg01"]["ReqHdr"]["TxID"];
+          saveRequestMessage(args,reqTimeMs,tran_request_id);   //entries message save to db
+          
           var actionCode  = helper.isNullEmptry(args["RegMsg01"]["ReqHdr"]["ActCd"])?'': args["RegMsg01"]["ReqHdr"]["ActCd"]
 
           processAction(actionCode,args,reqTimeMs)
@@ -40,36 +42,38 @@ var service = {
             logger.info('[RequestService01] processAction resp '+JSON.stringify(resp));
             let _responseXML = assignResCode('01',responseXML,resp,null);
             cb(_responseXML);
-            dao.saveResId(reqTimeMs,args["RegMsg01"]["ReqHdr"]["ReqID"],'','message01',_responseXML);
+            dao.saveResId(reqTimeMs,tran_request_id,'','message01',_responseXML);
           })
           .catch((err) => {
             logger.info('[RequestService01] processAction error => '+err);
-            console.log(err.stack);
+            //console.log(err.stack);
             let _responseXML = assignResCode('01',responseXML,null,err);
             cb(_responseXML);
-            dao.saveResId(reqTimeMs,args["RegMsg01"]["ReqHdr"]["ReqID"],'','error_message01',_responseXML);
+            dao.saveResId(reqTimeMs,tran_request_id,'','error_message01',_responseXML);
           })
           
         },
         RequestService02: function (args,cb,headers, req) {
           var reqTimeMs = new Date().getTime(); 
-          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);       
-          saveRequestMessage(args,reqTimeMs);
-          var responseXML = mapRequestToResponse(args)
+          logger.info('[RequestService01] soap message incoming => starting request-id '+reqTimeMs);    
+          var responseXML = mapRequestToResponse(args);
+          let tran_request_id = args["RegMsg02"]["TrnHdr"]["StrCd"]+'-'+reqTimeMs+'-'+args["RegMsg02"]["ReqHdr"]["TxID"];   
+          saveRequestMessage(args,reqTimeMs,tran_request_id);
           var actionCode = helper.isNullEmptry(args["RegMsg02"]["ReqHdr"]["ActCd"])?'': args["RegMsg02"]["ReqHdr"]["ActCd"]
+         
           processAction(actionCode,args,reqTimeMs)
           .then( (resp) => {
             logger.info('[RequestService02] processAction resp => '+JSON.stringify(resp));
             let _responseXML = assignResCode('02',responseXML,resp,null);
             cb(_responseXML);
-            dao.saveResId(reqTimeMs,args["RegMsg02"]["ReqHdr"]["ReqID"],'','message02',_responseXML);
+            dao.saveResId(reqTimeMs,tran_request_id,'','message02',_responseXML);
           })
           .catch((err) => {
             logger.info('RequestService02] processAction error => '+err);
-            console.log(err.stack);
+            //console.log(err.stack);
             let _responseXML = assignResCode('02',responseXML,null,err);
             cb(_responseXML);
-            dao.saveResId(reqTimeMs,args["RegMsg02"]["ReqHdr"]["ReqID"],'','error_message02',_responseXML);
+            dao.saveResId(reqTimeMs,tran_request_id,'','error_message02',_responseXML);
           })
         },
         RequestService03: function (args) {
@@ -269,13 +273,13 @@ function mapRequestToResponse(args){
     return responseJson;
 }
 
-function saveRequestMessage(request,reqTimeMs){
+function saveRequestMessage(request,reqTimeMs,tran_request_id){
   if(request["RegMsg01"]["ReqHdr"]["ReqID"]){ 
-    let reqId = request["RegMsg01"]["ReqHdr"]["ReqID"]
-    dao.saveReqId(reqTimeMs,reqId,'','message01',JSON.stringify(request))
+    //let reqId = request["RegMsg01"]["ReqHdr"]["ReqID"]
+    dao.saveReqId(reqTimeMs,tran_request_id,'','message01',JSON.stringify(request))
   }else if(request["RegMsg02"]["ReqHdr"]["ReqID"]){
-    let reqId = request["RegMsg02"]["ReqHdr"]["ReqID"]
-    dao.saveReqId(reqTimeMs,reqId,'','message02',JSON.stringify(request))
+    //let reqId = request["RegMsg02"]["ReqHdr"]["ReqID"]
+    dao.saveReqId(reqTimeMs,tran_request_id,'','message02',JSON.stringify(request))
   }
 } 
 

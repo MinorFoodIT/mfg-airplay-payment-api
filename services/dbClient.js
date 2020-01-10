@@ -100,16 +100,16 @@ const savePaymentRequest = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointSe
   })
 }
 
-const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointService,resMessage,resJsonMessage,resTime,status,seq) => {
+const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointService,resMessage,resJsonMessage,resTime,status,seq,respId) => {
     if(!helper.IsValidJSONString(resJsonMessage)){
         resJsonMessage = null
     }
     pool.connect()
     .then(client => {
         return client.query('UPDATE payment_requests '+
-                            ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7'+
+                            ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8'+
                             ' WHERE  request_id = $1 and tran_request_id = $2 and endpoint_service = $3 and request_sequence = $4 '
-                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status])
+                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId])
             .then(res => {
                 client.release();
             })
