@@ -199,7 +199,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     let error_stack    = error.stack;   //Error: timeout of 2ms exceeded
     if(String(error_code) == String('ECONNABORTED') && error_message.includes('timeout')){
         //timeout
-        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'timeout',1,res.data["ap_trans_id"]);
+        dao.savePaymentResponse(reqTimeMs,ReqId,JSON.stringify(apReqBody),apReqBody.data,'airpay.pay',helper.isObject(error)?JSON.stringify(error):error.message,error.message,null,'timeout',1,null);
         //retry inquiry
         let textToMD5_retry = partnerId.concat(serviceAP["query"],data,signType,secret);
         let sign_retry = crypto.createHash('md5').update(textToMD5_retry).digest("hex");
