@@ -203,7 +203,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         //retry inquiry
         let textToMD5_retry = partnerId.concat(serviceAP["query"],data,signType,secret);
         let sign_retry = crypto.createHash('md5').update(textToMD5_retry).digest("hex");
-        apReqBody["service"] = serviceAP["query"];s
+        apReqBody["service"] = serviceAP["query"];
         apReqBody["sign"] = sign_retry;
 
         sendInquiry(callback,apReqBody,1,reqTimeMs,ReqId);
