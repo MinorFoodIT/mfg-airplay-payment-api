@@ -7,6 +7,7 @@ const dao = require('./../dbClient');
 const config = require('./../../common/config');
 var helper = require('./../../common/helper');
 const myCache = require('./../../common/nodeCache');
+const merchant = require('./../../common/merchant');
 
 const serviceAP = {
     "pay" : 'ap.pay',
@@ -41,14 +42,17 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["trans_create_time"]    = TrnHdr["TrnDt"];
     payData["trans_name"]           = String(Number(TrnHdr["Ref2"].substring(11))); //0XXXXX
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
-    payData["merchant_id"]          = TrnHdr["StrCd"];
+   
     //console.log(myCache.get("sites").length);
-    let merchant_name = myCache.get("sites").filter(row => {
+    let sites = myCache.get("sites").filter(row => {
         return String(row.bu_code).trim() === String(TrnHdr["StrCd"]).trim();
     });
+    logger.info('site group = '+ (sites.length > 0 ?sites[0].site_group.trim():'Not found')) ; 
     // console.log(merchant_name.length);
     // console.log(merchant_name);
-    payData["merchant_name"]        = merchant_name.length > 0 ?merchant_name[0].site_group_name.trim() : 'MinorFood' ; 
+
+    payData["merchant_id"]          = sites.length > 0 ?merchant[sites[0].site_group.trim()] : 'MinorFood' ;       //TrnHdr["StrCd"];
+    payData["merchant_name"]        = sites.length > 0 ?sites[0].site_group_name.trim() : 'MinorFood' ; 
     //console.log(payData["merchant_name"] );
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
