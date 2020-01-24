@@ -5,7 +5,9 @@ const merchant = {
     "SG_DQ": 'DairyQueen',
     "SG_PZ": 'ThePizzaCompany',
     "SG_SZ": 'Sizzler',
-    "SG_TE": 'ThaiExpress'
+    "TH_TE": 'Basil',
+    "SG_TE": 'Basil',
+    "TH_BT": 'BreadTalk'
 }
 
 module.exports = merchant
