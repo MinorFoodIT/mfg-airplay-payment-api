@@ -109,10 +109,13 @@ const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
                     //other status of waiting 
                     callback(null,resMsgBody.data);
                 }
-            }
-            if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
-                //have error code
-                callback(null,resMsgBody.error_code);
+
+                if(resMsgBody["error_code"] && resMsgBody["error_code"].length > 0 ){
+                    //have error code
+                    callback(null,resMsgBody.error_code);
+                }else{
+                    callback(null,resMsgBody.data);
+                }
             }else{
                 callback(null,resMsgBody.data);
             }
