@@ -82,8 +82,8 @@ const takeMsgSign = (data,apiFunction) => {
     return apReqBody;
 }
 
-const sendInquiry = (callback,apReqBody,retryNo) => {
-    if(retryNo < 2){
+const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
+    if(retryNo <= 2){
         logger.info('[ap.query] api request | retry['+retryNo+'] => ');
         axios.post(inqURL, apReqBody, {timeout: 25000})
         .then(res => {
@@ -92,10 +92,18 @@ const sendInquiry = (callback,apReqBody,retryNo) => {
             if(helper.IsValidJSONString(resMsgBody)){
                 console.log(resMsgBody);
                 let respData = JSON.parse(resMsgBody);
+                //Save retry request
+                try{
+                    let apRespData = {...respData};
+                    dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(apRespData),apRespData,null,'resent',1,apRespData["ap_trans_id"]);
+                }catch(err){
+                    dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(apRespData),apRespData,null,'resent',1,null);
+                }
+
                 if(String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
                     setTimeout(function(){
                         let apReqBody = takeMsgSign(data,'query');
-                        sendInquiry(callback,apReqBody,++retryNo);
+                        sendInquiry(callback,apReqBody,++retryNo,reqTimeMs,partner_trans_id);
                     },5000);
                 }else{
                     //other status of waiting 
@@ -174,7 +182,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
             if( String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
                 setTimeout(function(){
                     let apReqBody = takeMsgSign(data,'query');
-                    sendInquiry(callback,apReqBody,1);
+                    sendInquiry(callback,apReqBody,1,reqTimeMs,jsonReq["partner_trans_id"]);
                 },30000);
             }else{
                 //logger.info('Will callback =>');
@@ -198,7 +206,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         apReqBody["service"] = serviceAP["query"];s
         apReqBody["sign"] = sign_retry;
 
-        sendInquiry(callback,apReqBody,1);
+        sendInquiry(callback,apReqBody,1,reqTimeMs,ReqId);
         /*
         // logger.info('[ap.query] api request => ');
         // console.log(JSON.stringify(apReqBody));
