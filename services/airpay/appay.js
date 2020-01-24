@@ -43,7 +43,7 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     payData["trans_name"]           = String(Number(TrnHdr["Ref2"].substring(11))); //0XXXXX
     payData["trans_amount"]         = Number(TrnHdr["TtlAmt"])*100;  //has 2 digits
    
-    //console.log(myCache.get("sites").length);
+    console.log('myCache.get("sites").length = '+myCache.get("sites").length);
     let sites = myCache.get("sites").filter(row => {
         return String(row.bu_code).trim() === String(TrnHdr["StrCd"]).trim();
     });
