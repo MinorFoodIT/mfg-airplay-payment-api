@@ -60,7 +60,8 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg01.ResHdr.ResCd = '0000';
                         resMsg01.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg01.ResDtl.ErrCd = '0000';
-
+                        resMsg01.ResDtl.ErrMsgThai = '';
+                        resMsg01.ResDtl.ErrMsgEng = '';
                         resMsg01.ResDtl.Ref1 = data["ap_trans_id"];
                         resMsg01.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg01.ResDtl.Ref4 = data["ap_buyer_ref"];
