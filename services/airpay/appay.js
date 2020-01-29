@@ -89,9 +89,9 @@ const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
         .then(res => {
             logger.info('[ap.query] api resp => ');  
             let resMsgBody = res.data; //body
-            if(helper.IsValidJSONString(resMsgBody)){
-                console.log(resMsgBody);
-                let respData = JSON.parse(resMsgBody);
+            if(helper.IsValidJSONString(resMsgBody.data)){
+                console.log(resMsgBody.data);
+                let respData = JSON.parse(resMsgBody.data);
                 //Save retry request
                 try{
                     let apRespData = {...respData};
@@ -117,6 +117,7 @@ const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
                     callback(null,resMsgBody.data);
                 }
             }else{
+                console.log(resMsgBody);
                 callback(null,resMsgBody.data);
             }
         })
@@ -181,8 +182,8 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
         if(helper.IsValidJSONString(resMsgBody.data)){
             //logger.info('Valid JSON');
             let respData = JSON.parse(resMsgBody.data);
-            //console.log(respData);
             if( String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
+                console.log(respData);
                 setTimeout(function(){
                     let apReqBody = takeMsgSign(data,'query');
                     sendInquiry(callback,apReqBody,1,reqTimeMs,jsonReq["partner_trans_id"]);
