@@ -4,6 +4,7 @@ Promise = require('bluebird');
 var payService = Promise.promisify(require('./../services/airpay/appay'));
 var apResCode = require('./../model/apResCode');
 var resCode = require('./../model/resCode');
+const moment = require('moment');
 
 const _resMsg01_02 = {
     "ResHdr": {
@@ -50,20 +51,22 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
         //invoke airpay api
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
-            //logger.info('callback message => '+apResp);
+            logger.info('callback message => '+apResp);
             if(helper.isString(apResp)){
                 if(helper.IsValidJSONString(apResp)){
                     let data = JSON.parse(apResp);
                     if(String(data["ap_trans_result"]) === String(apResCode.transResult.SUCCESSFUL)){
+                        logger.info('SUCCESSFUL');
                         resMsg01.ResHdr.ResCd = '0000';
                         resMsg01.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg01.ResDtl.ErrCd = '0000';
-
+                        resMsg01.ResDtl.ErrMsgThai = '';
+                        resMsg01.ResDtl.ErrMsgEng = '';
                         resMsg01.ResDtl.Ref1 = data["ap_trans_id"];
                         resMsg01.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg01.ResDtl.Ref4 = data["ap_buyer_ref"];
-                        resMsg01.ResDtl.Ref5 = data["trans_amount"];
-                        resMsg01.ResDtl.Ref6 = data["ap_pay_time"];
+                        //resMsg01.ResDtl.Ref5 = data["trans_amount"];
+                        resMsg01.ResDtl.Ref6 = moment(data["ap_pay_time"],"YYYYMMDDHHmmss").format('MM/DD/YYYY HH:mm:ss');
                     }else{
                         resMsg01.ResHdr.ResCd = '8006';
                         resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
@@ -84,6 +87,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
            
         })
         .catch(err => {
+            logger.info('error catch on response message');
             resMsg01.ResHdr.ResCd = '8006';
             resMsg01.ResHdr.ResMsg = resCode.code["8006"]["msgEng"] +' : '+ apResCode.errorCode["PLEASE_RETRY"];
             resMsg01.ResDtl.ErrCd = '8006';
@@ -117,8 +121,10 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
         payService(reqTimeMs,ReqHdr,TrnHdr,ReqId)
         .then( apResp => {
             if(helper.isString(apResp)){
+                logger.info('Data valid JSON : '+helper.IsValidJSONString(apResp));
                 if(helper.IsValidJSONString(apResp)){
                     let data = JSON.parse(apResp);
+                    console.log(data);
                     if(String(data["ap_trans_result"]) === String(apResCode.transResult.SUCCESSFUL)){
                         resMsg02.ResHdr.ResCd = '0000';
                         resMsg02.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
@@ -127,7 +133,7 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg02.ResDtl.Ref1 = data["ap_trans_id"];
                         resMsg02.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg02.ResDtl.Ref4 = data["ap_buyer_ref"];
-                        resMsg02.ResDtl.Ref5 = data["trans_amount"];
+                        //resMsg02.ResDtl.Ref5 = data["trans_amount"];
                         resMsg02.ResDtl.Ref6 = data["ap_pay_time"];
                     }else{
                         resMsg02.ResHdr.ResCd = '8006';

@@ -1,10 +1,10 @@
 const transResult = {
-        NOT_FOUND: 'Transaction is not found in the system',
-        SUCCESSFUL: 'Transaction is successful',
-        FAILED: 'Transaction is failed',
-        REFUNDED: 'Transaction is refunded',
-        CANCELLED: 'Transaction is cancelled',
-        UNKNOWN: 'Transaction status is unknown'               
+        NOT_FOUND: 'NOT_FOUND',         //'Transaction is not found in the system',
+        SUCCESSFUL: 'SUCCESSFUL' ,      //'Transaction is successful',
+        FAILED:  'FAILED',              //'Transaction is failed',
+        REFUNDED: 'REFUNDED' ,          //'Transaction is refunded',
+        CANCELLED: 'CANCELLED',         //'Transaction is cancelled',
+        UNKNOWN: 'UNKNOWN'              //'Transaction status is unknown'               
 }
 
 const transStatus = {
@@ -33,7 +33,8 @@ const errorCode = {
     INVALID_REFUND: 'Invalid refund',
     INVALID_AMOUNT: 'Invalid payment amount or refund amount or invalid currency',
     INVALID_PARAMS: 'Invalid format of request parameters',
-    PLEASE_RETRY: 'Unknown API response'
+    PLEASE_RETRY: 'Unknown API response',
+    NOT_ENOUGH_BALANCE: 'Not enough balance'
 }
 
 module.exports = {errorCode,transStatus,transResult}
