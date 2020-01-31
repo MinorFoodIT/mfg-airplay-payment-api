@@ -11,13 +11,21 @@ services:
     restart: 'always' #on-failure
     #depends_on:
     #  - db
-    expose:
-      - '4000'
-    ports:
-      - '4100:4000'
+    #expose:
+    #  - '4100'
+    #ports:
+    #  - '4100:4100'
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - api_network
       - postgres_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.airpay.entrypoints=websecure"
+      - "traefik.http.routers.airpay.rule=Host(`airpay-api.minorfoodit.com`)"
+      - "traefik.http.routers.airpay.service=adminer"
+      - "traefik.http.routers.airpay.tls=true"
+      - "traefik.http.services.airpay.loadbalancer.server.port=4100"
+      - "traefik.docker.network=api_network"
 
 networks:
   postgres_network:
