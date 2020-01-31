@@ -22,7 +22,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.airpay.entrypoints=websecure"
       - "traefik.http.routers.airpay.rule=Host(`airpay-api.minorfoodit.com`)"
-      - "traefik.http.routers.airpay.service=adminer"
+      - "traefik.http.routers.airpay.service=airpay-api"
       - "traefik.http.routers.airpay.tls=true"
       - "traefik.http.services.airpay.loadbalancer.server.port=4100"
       - "traefik.docker.network=api_network"
