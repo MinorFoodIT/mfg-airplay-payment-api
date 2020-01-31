@@ -24,7 +24,7 @@ services:
       - "traefik.http.routers.airpay.rule=Host(`airpay-api.minorfoodit.com`)"
       - "traefik.http.routers.airpay.service=airpay-api"
       - "traefik.http.routers.airpay.tls=true"
-      - "traefik.http.services.airpay.loadbalancer.server.port=4100"
+      - "traefik.http.services.airpay-api.loadbalancer.server.port=4100"
       - "traefik.docker.network=api_network"
 
 networks:
