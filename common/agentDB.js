@@ -27,7 +27,7 @@ function internalJob(url){
             // make sure that any items are correctly URL encoded in the connection string
             if(result.recordset){
                 //console.dir(result.recordset[0]);
-                result.recordset.forEach(row => {
+                result.recordset.forEach( async(row) => {
                    await dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]);
                 });
             } 
