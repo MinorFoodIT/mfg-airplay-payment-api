@@ -27,11 +27,14 @@ function internalJob(url){
             // make sure that any items are correctly URL encoded in the connection string
             if(result.recordset){
                 //console.dir(result.recordset[0]);
-                result.recordset.forEach( async(row) => {
-                   await dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]);
-                });
+                for(i=0; i< result.recordset.length; i++){
+                    let = result.recordset[i];
+                    logger.info('doing bucode '+row["BusinessUnit"]);
+                    await dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]);
+                }
+                // result.recordset.forEach( async(row) => {
+                // });
             } 
-            
             done();
         } catch (err) {
             // ... error checks

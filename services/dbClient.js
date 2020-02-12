@@ -51,31 +51,30 @@ const getSiteByBu = async (bu_code) => {
 }
 
 const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) => {
-    await pool.connect()
-    .then( async(client) => {
+        
         await getSiteByBu(bu_code)
         .then( async(rows) => {
             if(Number(rows.length) === Number(0)){
-                return client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
-                ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
-                .then(res => {
-                    client.release();
+                await pool.connect()
+                .then( client => {
+                    return client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
+                    ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
+                    .then(res => {
+                        client.release();
+                    })
+                    .catch(e => {
+                        client.release();
+                        logger.info('[saveSite] error => '+ e.stack);
+                    })
                 })
-                .catch(e => {
-                    client.release();
-                    logger.info('[saveSite] error => '+ e.stack);
+                .catch(err => {
+                    logger.info('[Pool connect] error => '+ err.stack);
                 })
             }
         })
         .catch(err => {
             logger.info('[getSiteByBu] error => '+ e.stack);
         })
-        
-    })
-    .catch(err => {
-        logger.info('[Pool connect] error => '+ err.stack);
-    })
-
 }
 
 /**
