@@ -28,7 +28,7 @@ function internalJob(url){
             if(result.recordset){
                 //console.dir(result.recordset[0]);
                 for(i=0; i< result.recordset.length; i++){
-                    let = result.recordset[i];
+                    let row = result.recordset[i];
                     logger.info('doing bucode '+row["BusinessUnit"]);
                     await dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]);
                 }
