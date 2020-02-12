@@ -28,7 +28,7 @@ function internalJob(url){
             if(result.recordset){
                 //console.dir(result.recordset[0]);
                 result.recordset.forEach(row => {
-                    dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]);
+                   await dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]);
                 });
             } 
             

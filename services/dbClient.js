@@ -50,8 +50,8 @@ const getSiteByBu = async (bu_code) => {
     }
 }
 
-const saveSite = (site_group,site_group_name,site_id,site_number,bu_code) => {
-    pool.connect()
+const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) => {
+    await pool.connect()
     .then(client => {
         getSiteByBu(bu_code)
         .then(rows => {
