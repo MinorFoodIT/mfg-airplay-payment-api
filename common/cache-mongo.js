@@ -14,6 +14,8 @@ const mongooseOpts = { // options for mongoose 4.11.3 and above
 };
 
 mongod.getConnectionString().then((mongoUri) => {
+    logger.info('[Mongo] connection string '+mongoUri);
+    
     mongoose.connect(mongoUri, mongooseOpts);
     mongoose.connection.on('error', () => {
         throw new Error(`[Mongoose] unable to connect to database: ${mongoUri}`);
