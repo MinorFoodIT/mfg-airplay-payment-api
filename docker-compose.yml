@@ -13,6 +13,8 @@ services:
       - ./data/db:/data/db
     ports:
       - 27017:27017
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - postgres_network
     #command: mongod --smallfiles --logpath=/dev/null # --quiet
   airpay-api:
     build:
