@@ -12,7 +12,7 @@ const mongooseOpts = { // options for mongoose 4.11.3 and above
     reconnectInterval: 1000,
     useNewUrlParser: true,
 };
-let mongoUri = 'mongodb://root:minor@mongodb:27017/agendaJob';
+let mongoUri = 'mongodb://root:minor@mongodb:27017/admin';
 
 //mongodb://127.0.0.1:59236/406a0652-9f93-4900-adba-8f41ef203b10?
 
