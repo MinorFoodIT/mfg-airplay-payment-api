@@ -38,6 +38,46 @@ const getSite = async () => {
     }
 }
 
+const getSiteByBu = async (bu_code) => {
+    try{
+        const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code='+bu_code+' ')
+        //return res.rows[0].site_group_name;
+        return res.rows;
+    }
+    catch(err){
+        logger.info('[Pool connect] error => '+ err.stack);
+        return [];
+    }
+}
+
+const saveSite = (site_group,site_group_name,site_id,site_number,bu_code) => {
+    pool.connect()
+    .then(client => {
+        getSiteByBu(bu_code)
+        .then(rows => {
+            if(Number(rows.length) === Number(0)){
+                return client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
+                ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
+                .then(res => {
+                    client.release();
+                })
+                .catch(e => {
+                    client.release();
+                    logger.info('[saveSite] error => '+ e.stack);
+                })
+            }
+        })
+        .catch(err => {
+            logger.info('[getSiteByBu] error => '+ e.stack);
+        })
+        
+    })
+    .catch(err => {
+        logger.info('[Pool connect] error => '+ err.stack);
+    })
+
+}
+
 /**
  * called from app.js
  * @param {*} reqId 
@@ -123,4 +163,4 @@ const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointS
   })
 }
 
-module.exports = {getSite ,saveReqId ,saveResId ,saveRawRequest ,savePaymentRequest ,savePaymentResponse}
+module.exports = {getSite, saveSite ,saveReqId ,saveResId ,saveRawRequest ,savePaymentRequest ,savePaymentResponse}
