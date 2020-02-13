@@ -40,9 +40,25 @@ const getSite = async () => {
 
 const getSiteByBu = async (bu_code) => {
     try{
-        const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code='+bu_code+' ')
-        //return res.rows[0].site_group_name;
-        return res.rows;
+        pool.connect()
+        .then(client => {
+            return client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
+                    .then(res => {
+                        client.release();
+                        return res.rows;
+                    })
+                    .catch(err => {
+                        client.release();
+                        logger.info('[saveSite] error => '+ err.stack);
+                    })
+        })
+        .catch(e =>{
+            logger.info('[getSiteByBu] error => '+ e.stack);
+        })
+
+        //const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code='+bu_code+' ')
+            //return res.rows[0].site_group_name;
+        //return res.rows;
     }
     catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
@@ -51,7 +67,6 @@ const getSiteByBu = async (bu_code) => {
 }
 
 const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) => {
-        
         await getSiteByBu(bu_code)
         .then( async(rows) => {
             if(Number(rows.length) === Number(0)){
@@ -73,7 +88,7 @@ const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) 
             }
         })
         .catch(err => {
-            logger.info('[getSiteByBu] error => '+ e.stack);
+            logger.info('[saveSite] error => '+ err.stack);
         })
 }
 
