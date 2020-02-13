@@ -11,7 +11,7 @@ function internalJob(url){
     agenda.database( url ,'agendaJob');
 
     agenda.define('updatesites', async function(job, done) {
-        logger.info('update sites'); 
+        logger.info('[Job] updatesites job started'); 
         try {
             const config = {
                 user: 'sysdev_si_api',
@@ -29,10 +29,10 @@ function internalJob(url){
                 //console.dir(result.recordset[0]);
                 for(i=0; i< result.recordset.length; i++){
                     let row = result.recordset[i];
-                    logger.info('No '+i+' doing bucode '+row["BusinessUnit"]);
+                    //logger.info('No '+i+' doing bucode '+row["BusinessUnit"]);
                     await Promise.all([dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"])]);
                 }
-                logger.info('finish update sites');
+                logger.info('[Job] finish updatesites');
                 // result.recordset.forEach( async(row) => {
                 // });
             } 
@@ -47,8 +47,8 @@ function internalJob(url){
     agenda.on('ready', async function() {
         await agenda.start();
         logger.info('[agenda] ready');
-        //await agenda.every('10 0 * * *',['updatesites']);
-        await agenda.every('5 minutes',['updatesites']);
+        await agenda.every('10 0 * * *',['updatesites']);
+        //await agenda.every('5 minutes',['updatesites']);
         logger.info('[agenda] job scheduled');
     });
 }
