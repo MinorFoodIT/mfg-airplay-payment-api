@@ -93,6 +93,7 @@ const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) 
                                                         logger.info('[saveSite] error => '+ e.stack);
                                                     })
                             }else{
+                                logger.info('====> client.release()');
                                 client.release();
                             }
                         })
