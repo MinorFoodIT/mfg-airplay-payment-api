@@ -71,6 +71,7 @@ const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) 
                   await client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
                         .then( async(res) => {
                             //logger.info('====> res');
+                            logger.info('length = '+res.rows.length +' , '+ (Number(res.rows.length) === Number(0)) );
                             if(Number(res.rows.length) === Number(0)){
                                 await client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
                                                                 ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
