@@ -69,18 +69,18 @@ const getSiteByBu = async (bu_code) => {
 }
 
 const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) => {
-        await Promise.all(
+        await Promise.resolve(
             pool.connect()
             .then( async(client) => {
-                await Promise.all(
+                await Promise.resolve(
                         client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
                         .then( async(res) => {
                             //client.release();
                             //logger.info('return '+res.rows);
                             //return res.rows;
-                            logger.info(res.rows);
+                            //logger.info(res.rows);
                             if(Number(res.rows.length) === Number(0)){
-                                await Promise.all( client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
+                                await Promise.resolve( client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
                                                                 ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
                                                     .then(res => {
                                                         client.release();
@@ -126,7 +126,7 @@ const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) 
         // .catch(err => {
         //     logger.info('[saveSite] error => '+ err.stack);
         // })
-        
+
         );
 }
 
