@@ -70,33 +70,35 @@ const getSiteByBu = async (bu_code) => {
 
 const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) => {
         //await Promise.resolve(
-            pool.connect()
+            await pool.connect()
             .then( async(client) => {
-                await Promise.all([
-                        client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
+                logger.info('==> clinet');
+                //await Promise.all([
+                  await client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
                         .then( async(res) => {
+                            logger.info('====> res');
                             //client.release();
                             //logger.info('return '+res.rows);
                             //return res.rows;
                             //logger.info(res.rows);
                             if(Number(res.rows.length) === Number(0)){
-                                await Promise.all([ client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
+                                await client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
                                                                 ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
                                                     .then(res => {
+                                                        logger.info('======> insert');
                                                         client.release();
                                                     })
                                                     .catch(e => {
                                                         client.release();
                                                         logger.info('[saveSite] error => '+ e.stack);
                                                     })
-                                                ]);
                             }
                         })
                         .catch(err => {
                             client.release();
                             logger.info('[getSiteByBu] error => '+ err.stack);
                         })
-                    ]);
+                //    ]);
             })
             .catch(e =>{
                 logger.info('[Pool connect] error => '+ e.stack);
