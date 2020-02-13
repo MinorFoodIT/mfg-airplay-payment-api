@@ -29,7 +29,7 @@ function internalJob(url){
                 //console.dir(result.recordset[0]);
                 for(i=0; i< result.recordset.length; i++){
                     let row = result.recordset[i];
-                    logger.info('doing bucode '+row["BusinessUnit"]);
+                    //logger.info('doing bucode '+row["BusinessUnit"]);
                     await Promise.all([dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"])]);
                 }
                 // result.recordset.forEach( async(row) => {
@@ -46,8 +46,8 @@ function internalJob(url){
     agenda.on('ready', async function() {
         await agenda.start();
         logger.info('[agenda] ready');
-        //await agenda.every('10 0 * * *',['updatesites']);
-        await agenda.every('5 minutes',['updatesites']);
+        await agenda.every('10 0 * * *',['updatesites']);
+        //await agenda.every('5 minutes',['updatesites']);
         logger.info('[agenda] job scheduled');
     });
 }
