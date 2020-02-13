@@ -30,7 +30,7 @@ function internalJob(url){
                 for(i=0; i< result.recordset.length; i++){
                     let row = result.recordset[i];
                     logger.info('doing bucode '+row["BusinessUnit"]);
-                    await Promise.resolve(dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"]));
+                    await Promise.all([dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"])]);
                 }
                 // result.recordset.forEach( async(row) => {
                 // });
