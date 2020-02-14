@@ -8,7 +8,7 @@ var dbconfig = {
     password: config.pg_password,
     database: config.pg_database,
     port: config.pg_port,
-    max: 500,
+    max: 5000,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
 }

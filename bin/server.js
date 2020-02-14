@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('http:api');
 var http = require('http');
 var logger = require('./../common/logging/winston')(__filename);
+var cacheMongod = require('./../common/cache-mongo'); //init cache created and mongoose connection loaded
 
 /**
  * Get port from environment and store in Express.
@@ -54,6 +55,7 @@ function onError(error) {
   logger.info('[Server intrnal error] '+error)
   if (error.syscall !== 'listen') {
     //nodeCache.close();
+    cacheMongod.stop();
     throw error;
   }
 
@@ -75,6 +77,7 @@ function onError(error) {
       break;
     default:
       //nodeCache.close();
+      cacheMongod.stop();
       throw error;
   }
 }
