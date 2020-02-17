@@ -162,15 +162,20 @@ const savePaymentRequest = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointSe
 }
 
 const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointService,resMessage,resJsonMessage,resTime,status,seq,respId) => {
-    if(!helper.IsValidJSONString(resJsonMessage)){
+    let dataInResp ;
+    let jsonObject_dataInResp;
+    if(!helper.isObject(resJsonMessage)){
         resJsonMessage = null
+    }else{
+        dataInResp = resJsonMessage.data; //String format
+        jsonObject_dataInResp = JSON.parse(dataInResp);
     }
     pool.connect()
     .then(client => {
         return client.query('UPDATE payment_requests '+
                             ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8'+
                             ' WHERE  request_id = $1 and tran_request_id = $2 and endpoint_service = $3 and request_sequence = $4 '
-                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId])
+                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId,jsonObject_dataInResp["ap_trans_result"],jsonObject_dataInResp["ap_trans_status"],jsonObject_dataInResp["trans_amount"]])
             .then(res => {
                 client.release();
             })
