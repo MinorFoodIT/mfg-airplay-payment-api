@@ -187,18 +187,21 @@ const savePaymentRequest = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointSe
 const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointService,resMessage,resJsonMessage,resTime,status,seq,respId) => {
     let dataInResp ;
     let jsonObject_dataInResp;
+    let error_code;
     if(!helper.isObject(resJsonMessage)){
-        resJsonMessage = null
+        resJsonMessage = null;
+        error_code = '';
     }else{
         dataInResp = resJsonMessage.data; //String format
         jsonObject_dataInResp = JSON.parse(dataInResp);
+        error_code = resJsonMessage["error_code"];
     }
     pool.connect()
     .then(client => {
         return client.query('UPDATE payment_requests '+
-                            ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8 ,ap_trans_result = $9 ,ap_trans_status = $10 ,ap_trans_amount = $11'+
+                            ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8 ,ap_trans_result = $9 ,ap_trans_status = $10 ,ap_trans_amount = $11 ,ap_error_code = $12'+
                             ' WHERE  request_id = $1 and tran_request_id = $2 and endpoint_service = $3 and request_sequence = $4 '
-                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId,jsonObject_dataInResp["ap_trans_result"],jsonObject_dataInResp["ap_trans_status"],jsonObject_dataInResp["trans_amount"]])
+                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId,jsonObject_dataInResp["ap_trans_result"],jsonObject_dataInResp["ap_trans_status"],jsonObject_dataInResp["trans_amount"],error_code])
             .then(res => {
                 client.release();
             })
