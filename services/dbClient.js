@@ -198,7 +198,7 @@ const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointS
         return client.query('UPDATE payment_requests '+
                             ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8 ,ap_trans_result = $9 ,ap_trans_status = $10 ,ap_trans_amount = $11'+
                             ' WHERE  request_id = $1 and tran_request_id = $2 and endpoint_service = $3 and request_sequence = $4 '
-                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId,jsonObject_dataInResp["ap_trans_result"],jsonObject_dataInResp["ap_trans_status"],jsonObject_dataInResp["ap_trans_amount"]])
+                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId,jsonObject_dataInResp["ap_trans_result"],jsonObject_dataInResp["ap_trans_status"],jsonObject_dataInResp["trans_amount"]])
             .then(res => {
                 client.release();
             })
