@@ -12,11 +12,11 @@ const dao = require('./../services/dbClient');
 var resCode = require('./../model/resCode');
 const myCache = require('./../common/nodeCache');
 
-const loadSites = async() =>{
-  return await Promise.all([dao.getSite()]);
-}
+// const loadSites = async() =>{
+//   return await Promise.all([dao.getSite()]);
+// }
 
-loadSites().then(rows => {
+dao.getSite().then(rows => {
   console.log('Promise return getSite');
   myCache.set("sites",rows);
   console.log(myCache.get("sites"));

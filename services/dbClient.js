@@ -26,12 +26,13 @@ const saveRawRequest = (req,jsonReq) => {
 
 }
 
-const getSite = async () => {
+const getSite =  () => {
     try{
-        await pool.connect()
-        .then( async (client) => {
-            await client.query('SELECT site_group,site_group_name,bu_code,site_id from sites')
+        pool.connect()
+        .then( (client) => {
+            return client.query('SELECT site_group,site_group_name,bu_code,site_id from sites')
                     .then( res => {
+                        logger.info('execute query => done');
                         client.release();
                         return res.rows;
                     })
