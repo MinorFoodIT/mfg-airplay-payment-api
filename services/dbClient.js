@@ -1,6 +1,7 @@
 var pool = require('./../common/pg/pooled');
 var logger = require('./../common/logging/winston')(__filename);
 var helper = require('./../common/helper');
+const myCache = require('./../common/nodeCache');
 
 /**
  * called from app.js
@@ -26,26 +27,28 @@ const saveRawRequest = (req,jsonReq) => {
 
 }
 
-const getSite =  () => {
+const getSite = () => {
     try{
         pool.connect()
         .then( (client) => {
             return client.query('SELECT site_group,site_group_name,bu_code,site_id from sites')
                     .then( res => {
                         logger.info('execute query => done');
+                        myCache.set("sites",res.rows);
                         client.release();
-                        return res.rows;
+                        console.log(myCache.get("sites"));
+                        //return res.rows;
                     })
                     .catch(err => {
                         client.release();
                         logger.info('[getSite] error => '+ err.stack);
-                        return [];
+                        //return [];
                     })
                 
         })
         .catch(e =>{
             logger.info('[getSite] error => '+ e.stack);
-            return [];
+            //return [];
         })
     
         // const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites ')
@@ -54,7 +57,7 @@ const getSite =  () => {
     }
     catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
-        return [];
+        //return [];
     }
 }
 

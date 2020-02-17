@@ -16,14 +16,16 @@ const myCache = require('./../common/nodeCache');
 //   return await Promise.all([dao.getSite()]);
 // }
 
-dao.getSite().then(rows => {
-  console.log('Promise return getSite');
-  myCache.set("sites",rows);
-  console.log(myCache.get("sites"));
-})
-.catch(err => {
-  logger.info('error load cache : sites data'); 
-})
+Promise.all([dao.getSite()]);
+
+// .then(rows => {
+//   console.log('Promise return getSite');
+//   myCache.set("sites",rows);
+//   console.log(myCache.get("sites"));
+// })
+// .catch(err => {
+//   logger.info('error load cache : sites data'); 
+// })
 
 //Load Webservice definetion
 var xml = require('fs').readFileSync(path.join(__dirname,'posservices.wsdl'), 'utf8');
