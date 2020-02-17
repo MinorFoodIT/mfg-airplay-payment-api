@@ -7,7 +7,7 @@ const dao = require('./../dbClient');
 const config = require('./../../common/config');
 var helper = require('./../../common/helper');
 const myCache = require('./../../common/nodeCache');
-const merchant = require('./../../common/merchant');
+const merchantCofig = require('./../../common/merchant');
 
 const serviceAP = {
     "pay" : 'ap.pay',
@@ -51,8 +51,9 @@ const mapAtg01ToAP = (reqTimeMs,ReqHdr,TrnHdr) => {
     // console.log(merchant_name.length);
     // console.log(merchant_name);
 
-    payData["merchant_id"]          = sites.length > 0 ?merchant[sites[0].site_group.trim()] : 'MinorFood' ;       //TrnHdr["StrCd"];
-    payData["merchant_name"]        = sites.length > 0 ?sites[0].site_group_name.trim() : 'MinorFood' ; 
+    payData["merchant_id"]          = sites.length > 0 ?merchantCofig.merchant[sites[0].site_group.trim()] : 'MinorFood' ;       //TrnHdr["StrCd"];
+    payData["merchant_name"]        = sites.length > 0 ?merchantCofig.merchat_group[sites[0].site_group.trim()] : 'MinorFood' ;
+    //payData["merchant_name"]        = sites.length > 0 ?sites[0].site_group_name.trim() : 'MinorFood' ; 
     //console.log(payData["merchant_name"] );
     payData["store_id"]             = TrnHdr["StrCd"];
     payData["store_name"]           = TrnHdr["Ref3"]; //bu code
