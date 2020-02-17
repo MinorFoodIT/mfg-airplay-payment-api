@@ -24,8 +24,8 @@ services:
         DB_HOST: db
     #container_name: 'airplay-api'
     restart: 'always' #on-failure
-    #depends_on:
-    #  - db
+    depends_on:
+      - mongodb
     #expose:
     #  - '4100'
     #ports:

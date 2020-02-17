@@ -12,14 +12,20 @@ const dao = require('./../services/dbClient');
 var resCode = require('./../model/resCode');
 const myCache = require('./../common/nodeCache');
 
-dao.getSite()
-.then(rows => {
-  myCache.set("sites",rows);
-  console.log(myCache.get("sites"));
-})
-.catch(err => {
-  logger.info('error load cache : sites data'); 
-})
+// const loadSites = async() =>{
+//   return await Promise.all([dao.getSite()]);
+// }
+
+Promise.all([dao.getSite()]);
+
+// .then(rows => {
+//   console.log('Promise return getSite');
+//   myCache.set("sites",rows);
+//   console.log(myCache.get("sites"));
+// })
+// .catch(err => {
+//   logger.info('error load cache : sites data'); 
+// })
 
 //Load Webservice definetion
 var xml = require('fs').readFileSync(path.join(__dirname,'posservices.wsdl'), 'utf8');

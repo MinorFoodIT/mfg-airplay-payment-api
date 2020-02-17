@@ -1,6 +1,7 @@
 var pool = require('./../common/pg/pooled');
 var logger = require('./../common/logging/winston')(__filename);
 var helper = require('./../common/helper');
+const myCache = require('./../common/nodeCache');
 
 /**
  * called from app.js
@@ -26,15 +27,37 @@ const saveRawRequest = (req,jsonReq) => {
 
 }
 
-const getSite = async () => {
+const getSite = () => {
     try{
-        const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites ')
-        //return res.rows[0].site_group_name;
-        return res.rows;
+        pool.connect()
+        .then( (client) => {
+            return client.query('SELECT site_group,site_group_name,bu_code,site_id from sites')
+                    .then( res => {
+                        logger.info('execute query => done');
+                        myCache.set("sites",res.rows);
+                        client.release();
+                        console.log(myCache.get("sites"));
+                        //return res.rows;
+                    })
+                    .catch(err => {
+                        client.release();
+                        logger.info('[getSite] error => '+ err.stack);
+                        //return [];
+                    })
+                
+        })
+        .catch(e =>{
+            logger.info('[getSite] error => '+ e.stack);
+            //return [];
+        })
+    
+        // const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites ')
+        // //return res.rows[0].site_group_name;
+        // return res.rows;
     }
     catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
-        return [];
+        //return [];
     }
 }
 
@@ -162,15 +185,20 @@ const savePaymentRequest = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointSe
 }
 
 const savePaymentResponse = (reqTimeMs,reqId,reqMessage,reqJsonMessage,endpointService,resMessage,resJsonMessage,resTime,status,seq,respId) => {
-    if(!helper.IsValidJSONString(resJsonMessage)){
+    let dataInResp ;
+    let jsonObject_dataInResp;
+    if(!helper.isObject(resJsonMessage)){
         resJsonMessage = null
+    }else{
+        dataInResp = resJsonMessage.data; //String format
+        jsonObject_dataInResp = JSON.parse(dataInResp);
     }
     pool.connect()
     .then(client => {
         return client.query('UPDATE payment_requests '+
-                            ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8'+
+                            ' SET  response_time = now() , response_message = $5   ,response_json_message = $6 ,status = $7 ,tran_response_id = $8 ,ap_trans_result = $9 ,ap_trans_status = $10 ,ap_trans_amount = $11'+
                             ' WHERE  request_id = $1 and tran_request_id = $2 and endpoint_service = $3 and request_sequence = $4 '
-                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId])
+                            , [reqTimeMs,reqId,endpointService,seq,resMessage,resJsonMessage,status,respId,jsonObject_dataInResp["ap_trans_result"],jsonObject_dataInResp["ap_trans_status"],jsonObject_dataInResp["trans_amount"]])
             .then(res => {
                 client.release();
             })
