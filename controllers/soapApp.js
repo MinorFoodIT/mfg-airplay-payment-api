@@ -14,6 +14,7 @@ const myCache = require('./../common/nodeCache');
 
 dao.getSite()
 .then(rows => {
+  console.log('Promise return getSite');
   myCache.set("sites",rows);
   console.log(myCache.get("sites"));
 })
