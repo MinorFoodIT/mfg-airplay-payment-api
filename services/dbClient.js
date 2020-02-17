@@ -28,9 +28,26 @@ const saveRawRequest = (req,jsonReq) => {
 
 const getSite = async () => {
     try{
-        const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites ')
-        //return res.rows[0].site_group_name;
-        return res.rows;
+        pool.connect()
+        .then(client => {
+            return Promise.all(client.query('SELECT site_group,site_group_name,bu_code,site_id from sites')
+                    .then(res => {
+                        client.release();
+                        return res.rows;
+                    })
+                    .catch(err => {
+                        client.release();
+                        logger.info('[getSite] error => '+ err.stack);
+                    })
+                );
+        })
+        .catch(e =>{
+            logger.info('[getSite] error => '+ e.stack);
+        })
+    
+        // const res = await pool.query('SELECT site_group,site_group_name,bu_code,site_id from sites ')
+        // //return res.rows[0].site_group_name;
+        // return res.rows;
     }
     catch(err){
         logger.info('[Pool connect] error => '+ err.stack);
