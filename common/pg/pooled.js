@@ -10,7 +10,7 @@ var dbconfig = {
     port: config.pg_port,
     max: 5000,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 6000000,
 }
 
 console.log(dbconfig);
