@@ -105,8 +105,8 @@ const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
                 if(String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
                     logger.info('[ap.query] wait to retry again => 5s'); 
                     setTimeout(function(){
-                        let apReqBody = takeMsgSign(data,'query');
-                        sendInquiry(callback,apReqBody,++retryNo,reqTimeMs,partner_trans_id);
+                        let apReqBody2 = takeMsgSign(apReqBody.data,'query');
+                        sendInquiry(callback,apReqBody2,++retryNo,reqTimeMs,partner_trans_id);
                     },5000);
                 }else{
                     //other status of waiting 
