@@ -96,9 +96,9 @@ const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
                 //Save retry request
                 try{
                     let apRespData = {...respData};
-                    dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(apRespData),apRespData,null,'resent',1,apRespData["ap_trans_id"]);
+                    dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(resMsgBody),resMsgBody,null,'resent',1,apRespData["ap_trans_id"]);
                 }catch(err){
-                    dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(apRespData),apRespData,null,'resent',1,null);
+                    dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(resMsgBody),resMsgBody,null,'resent',1,null);
                 }
 
                 if(String(respData["ap_trans_status"]) === String('TRANS_PROCESSING') || String(respData["ap_trans_status"]) === String('WAIT_BUYER_PAY')){
@@ -123,7 +123,7 @@ const sendInquiry = (callback,apReqBody,retryNo,reqTimeMs,partner_trans_id) => {
             }
         })
         .catch(err => {
-            logger.info('[ap.query] error '+error.message);
+            logger.info('[ap.query] error '+err.message);
             if(String(err.code) == String('ECONNABORTED') && String(err.message).includes('timeout')){
                 callback(err,null);
             }else{
