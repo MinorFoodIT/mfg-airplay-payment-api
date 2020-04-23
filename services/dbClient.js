@@ -90,32 +90,34 @@ const getSiteByBu = async (bu_code) => {
 const saveSite = async (site_group,site_group_name,site_id,site_number,bu_code) => {
             await pool.connect()
             .then( async(client) => {
-                  //logger.info('==> clinet');
-                  await client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
-                        .then( async(res) => {
-                            //logger.info('====> res');
-                            //logger.info('length = '+res.rows.length +' , '+ (Number(res.rows.length) === Number(0)) );
-                            if(Number(res.rows.length) === Number(0)){
-                                await client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
-                                                                ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
-                                                    .then(res => {
-                                                        logger.info('======> insert bucode '+bu_code);
-                                                        client.release();
-                                                    })
-                                                    .catch(e => {
-                                                        client.release();
-                                                        logger.info('[saveSite] error => '+ e.stack);
-                                                    })
-                            }else{
-                                //logger.info('====> client.release()');
-                                client.release();
-                            }
-                        })
-                        .catch(err => {
+                  try{
+                    await client.query('SELECT site_group,site_group_name,bu_code,site_id from sites where bu_code=$1 ',[bu_code])
+                    .then( async(res) => {
+                        //logger.info('====> res');
+                        //logger.info('length = '+res.rows.length +' , '+ (Number(res.rows.length) === Number(0)) );
+                        if(Number(res.rows.length) === Number(0)){
+                            await client.query('INSERT INTO sites (site_group,site_group_name,site_id,site_number,bu_code) ' +
+                                                            ' values( $1 ,$2 ,$3 ,$4 ,$5 )', [site_group,site_group_name,site_id,site_number,bu_code])
+                                                .then(res => {
+                                                    logger.info('======> insert bucode '+bu_code);
+                                                    client.release();
+                                                })
+                                                .catch(e => {
+                                                    client.release();
+                                                    logger.info('[saveSite] error => '+ e.stack);
+                                                })
+                        }else{
+                            //logger.info('====> client.release()');
                             client.release();
-                            logger.info('[getSiteByBu] error => '+ err.stack);
-                        })
-                //    ]);
+                        }
+                    })
+                    .catch(err => {
+                        client.release();
+                        logger.info('[getSiteByBu] error => '+ err.stack);
+                    })
+                  }catch(exClient){
+                    client.release();
+                  }
             })
             .catch(e =>{
                 logger.info('[Pool connect] error => '+ e.stack);
