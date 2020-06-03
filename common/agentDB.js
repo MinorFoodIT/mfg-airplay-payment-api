@@ -48,8 +48,8 @@ function internalJob(url){
     agenda.on('ready', async function() {
         await agenda.start();
         logger.info('[agenda] ready');
-        await agenda.every('10 0 * * *',['updatesites']);
-        //await agenda.every('5 minutes',['updatesites']);
+        //await agenda.every('10 0 * * *',['updatesites']);
+        await agenda.every('2 minutes',['updatesites']);
         logger.info('[agenda] job scheduled');
     });
 }
