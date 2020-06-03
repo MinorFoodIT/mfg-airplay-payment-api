@@ -18,6 +18,7 @@ function internalJob(url){
                 password: 'fitsi#API2B',
                 server: '10.201.134.205', // You can use 'localhost\\instance' to connect to named instance
                 database: 'MFG_APIService_DB',
+                port: 20000
             }
             let pool = await sql.connect(config);
             let result = await pool.request()
@@ -48,7 +49,7 @@ function internalJob(url){
         await agenda.start();
         logger.info('[agenda] ready');
         await agenda.every('10 0 * * *',['updatesites']);
-        //await agenda.every('5 minutes',['updatesites']);
+        //await agenda.every('2 minutes',['updatesites']);
         logger.info('[agenda] job scheduled');
     });
 }
