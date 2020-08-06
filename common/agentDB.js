@@ -34,6 +34,7 @@ function internalJob(url){
                     await Promise.all([dao.saveSite(row["SiteGroup_ID"],row["SiteName"],row["SiteID"],row["SiteNumber"],row["BusinessUnit"])]);
                 }
                 logger.info('[Job] finish updatesites');
+                await Promise.all([dao.getSite()]);
                 // result.recordset.forEach( async(row) => {
                 // });
             } 
