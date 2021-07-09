@@ -263,7 +263,7 @@ function mapRequestToResponse(args){
       responseJson["RequestService02Result"]["ResDtl"]["ErrMsgEng"] = '';
       responseJson["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = '';
       responseJson["RequestService02Result"]["ResDtl"]["ApvlCd"] = '';
-      responseJson["RequestService02Result"]["ResDtl"]["Ref1"] = args["RegMsg01"]["ReqHdr"]["ReqID"]; //'';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref1"] = args["RegMsg02"]["ReqHdr"]["ReqID"]; //'';
       responseJson["RequestService02Result"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
       responseJson["RequestService02Result"]["ResDtl"]["Ref3"] = '';
       responseJson["RequestService02Result"]["ResDtl"]["Ref4"] = '';
