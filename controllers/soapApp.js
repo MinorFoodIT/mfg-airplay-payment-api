@@ -235,7 +235,7 @@ function mapRequestToResponse(args){
       responseJson["RequestService01Result"]["ResDtl"]["ErrMsgEng"] = '';
       responseJson["RequestService01Result"]["ResDtl"]["ErrMsgThai"] = '';
       responseJson["RequestService01Result"]["ResDtl"]["ApvlCd"] = args["RegMsg01"]["ReqHdr"]["ActCd"];
-      responseJson["RequestService01Result"]["ResDtl"]["Ref1"] = '';
+      responseJson["RequestService01Result"]["ResDtl"]["Ref1"] = args["RegMsg01"]["ReqHdr"]["ReqID"]; //'';
       responseJson["RequestService01Result"]["ResDtl"]["Ref2"] = args["RegMsg01"]["TrnHdr"]["StrCd"];
       responseJson["RequestService01Result"]["ResDtl"]["Ref3"] = '';
       responseJson["RequestService01Result"]["ResDtl"]["Ref4"] = '';
@@ -263,7 +263,7 @@ function mapRequestToResponse(args){
       responseJson["RequestService02Result"]["ResDtl"]["ErrMsgEng"] = '';
       responseJson["RequestService02Result"]["ResDtl"]["ErrMsgThai"] = '';
       responseJson["RequestService02Result"]["ResDtl"]["ApvlCd"] = '';
-      responseJson["RequestService02Result"]["ResDtl"]["Ref1"] = '';
+      responseJson["RequestService02Result"]["ResDtl"]["Ref1"] = args["RegMsg01"]["ReqHdr"]["ReqID"]; //'';
       responseJson["RequestService02Result"]["ResDtl"]["Ref2"] = args["RegMsg02"]["TrnHdr"]["StrCd"];
       responseJson["RequestService02Result"]["ResDtl"]["Ref3"] = '';
       responseJson["RequestService02Result"]["ResDtl"]["Ref4"] = '';

@@ -62,7 +62,7 @@ const processMsg01 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg01.ResDtl.ErrCd = '0000';
                         resMsg01.ResDtl.ErrMsgThai = '';
                         resMsg01.ResDtl.ErrMsgEng = '';
-                        resMsg01.ResDtl.Ref1 = data["ap_trans_id"];
+                        resMsg01.ResDtl.Ref1 = ReqId; //data["ap_trans_id"];
                         resMsg01.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg01.ResDtl.Ref4 = data["ap_buyer_ref"];
                         //resMsg01.ResDtl.Ref5 = data["trans_amount"];
@@ -130,7 +130,7 @@ const processMsg02 = (actionCode ,atgReq ,reqTimeMs,callback) => {
                         resMsg02.ResHdr.ResMsg = resCode.code["0000"]["msgEng"] +' : '+ apResCode.transResult[data["ap_trans_result"]] +', '+apResCode.transStatus[data["ap_trans_status"]];
                         resMsg02.ResDtl.ErrCd = '0000';
 
-                        resMsg02.ResDtl.Ref1 = data["ap_trans_id"];
+                        resMsg02.ResDtl.Ref1 = ReqId; //data["ap_trans_id"];
                         resMsg02.ResDtl.Ref3 = data["partner_trans_id"]; //partner tran id
                         resMsg02.ResDtl.Ref4 = data["ap_buyer_ref"];
                         //resMsg02.ResDtl.Ref5 = data["trans_amount"];
