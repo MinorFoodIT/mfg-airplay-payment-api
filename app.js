@@ -7,6 +7,8 @@ app.use(httpContext.middleware);
 // Run the context for each request. Assign a unique identifier to each request
 
 soapApp(app);
+var adminRoutes = require('./routes/admin/admin-route');
+app.use('/admin', adminRoutes);
 app.use(function(req, res, next) {
     // console.log('middleware() => ')
     // console.log(req)
