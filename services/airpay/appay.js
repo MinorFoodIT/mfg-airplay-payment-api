@@ -166,6 +166,7 @@ const payService = (reqTimeMs,ReqHdr,TrnHdr,ReqId,callback) => {
     logger.info('[ap.pay] api resp => ');  //+`statusCode: ${res.statusCode}`
     if(helper.isObject(res.data)){
         let respData = res.data;
+        //console.log(respData);
         try{
             let apRespData = JSON.parse(respData.data)
             dao.savePaymentResponse(reqTimeMs,jsonReq["partner_trans_id"],JSON.stringify(apReqBody),apReqBody,'airpay.pay',JSON.stringify(res.data),res.data,null,'sent',1,apRespData["ap_trans_id"]);
